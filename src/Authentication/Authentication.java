@@ -4,9 +4,12 @@ import java.sql.*;
 
 public class Authentication {
     public static Connection connect() throws SQLException{
-        Connection conn = DriverManager.getConnection(
+        return DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/Stationary-DB","root","memr5");
+    }
 
-        return conn;
+    public static boolean isAdmin(String user_name){
+        //Add code to check if user_name is of Admin or not
+        return true;
     }
 }
