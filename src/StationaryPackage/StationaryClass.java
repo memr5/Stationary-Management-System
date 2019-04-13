@@ -25,8 +25,10 @@ public class StationaryClass implements Pages{
                            "\t\t3. Cart\n" +
                            "\t\t4. Logout\n" +
                            "\t\t5. Exit" +
-                           "---------------------------------------------------------------------\n\n");
+                           "---------------------------------------------------------------------\n\n" +
+                           "\t\tEnter your choice : ");
     }
+
 
     public void WelcomePage(){
         this.Banner();
@@ -47,14 +49,14 @@ public class StationaryClass implements Pages{
         ResultSet rst = st.executeQuery("SELECT users_name FROM users WHERE user_name IS " + user_name);
         //Add code to detect if user exist or not then check if the password is correct or not
         if(rst.next()) {
-            if(rst.getString(1).equals(password)) {
+            if(rst.getString(2).equals(password)) {
                 this.user_name = user_name;
                 return true;
             }
             System.out.println("WRONG PASSWORD!");
         }
 
-        return Login();
+        return false;
     }
 
     public boolean Sign_up() throws SQLException{
@@ -69,14 +71,16 @@ public class StationaryClass implements Pages{
 
         if(rst.next()){
             System.out.println("User Name already exists!");
-            return Sign_up();
+            return false;
         }
-        this.user_name = user_name;
-        //Add code to insert new user record in user table
-        return true;
+        else {
+            this.user_name = user_name;
+            //Add code to insert new user record in user table
+            return true;
+        }
     }
 
-    public String[] getCredentials(){
+    private String[] getCredentials(){
 
         Scanner in = new Scanner(System.in);
         System.out.print("\t\tUser_name : ");
