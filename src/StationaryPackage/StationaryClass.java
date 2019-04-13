@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class StationaryClass implements Pages{
 
     private String user_name;
-
+    static int i = 0;
     public void Banner(){
         System.out.print  ("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n" +
                            "---------------------STATIONARY-MANAGEMENT-SYSTEM--------------------\n\n" +
@@ -45,16 +45,24 @@ public class StationaryClass implements Pages{
         String password = credentials[1];
 
         Connection conn = Authentication.connect();
-        Statement st = conn.createStatement();
-        ResultSet rst = st.executeQuery("SELECT users_name FROM users WHERE user_name IS " + user_name);
-        //Add code to detect if user exist or not then check if the password is correct or not
-        if(rst.next()) {
-            if(rst.getString(2).equals(password)) {
-                this.user_name = user_name;
-                return true;
+        ResultSet rst;
+        try (Statement st = conn.createStatement()) {
+            rst = st.executeQuery("SELECT * FROM user WHERE user_name '" + user_name + "'");
+            if(rst.next()){
+                if(rst.getString(2).equals(password)) {
+                    this.user_name = user_name;
+                    return true;
+                }
+                System.out.println("WRONG PASSWORD!");
+            }else{
+                System.out.println("SORRY WRONG USER NAME AND PASSWORD ");
             }
-            System.out.println("WRONG PASSWORD!");
+        }catch (Exception ex){
+            System.out.println("Exception at Search user : \n" + ex);
         }
+        //Add code to detect if user exist or not then check if the password is correct or not
+
+
 
         return false;
     }
@@ -66,17 +74,20 @@ public class StationaryClass implements Pages{
         String password = credentials[1];
 
         Connection conn = Authentication.connect();
-        Statement st = conn.createStatement();
-        ResultSet rst = st.executeQuery("SELECT users_name FROM users WHERE user_name IS " + user_name);
+        try (Statement st = conn.createStatement()) {
+            ResultSet rst = st.executeQuery("SELECT * FROM user WHERE user_name = '" + user_name + "'");
 
-        if(rst.next()){
-            System.out.println("User Name already exists!");
-            return false;
-        }
-        else {
-            this.user_name = user_name;
-            //Add code to insert new user record in user table
-            return true;
+            if (rst.next()) {
+                System.out.println("User Name already exists!");
+                return false;
+            } else {
+                this.user_name = user_name;
+                //Add code to insert new user record in user table
+
+                st.executeQuery("INSERT INTO user VALUES (" + i + ",'" + password + "','" + user_name + "')");
+                i++;
+                return true;
+            }
         }
     }
 
