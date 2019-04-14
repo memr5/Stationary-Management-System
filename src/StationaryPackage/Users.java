@@ -2,10 +2,7 @@ package StationaryPackage;
 
 import Authentication.Authentication;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -30,8 +27,7 @@ class Users {
                 "\t\t1. Search\n" +
                 "\t\t2. Your Orders\n" +
                 "\t\t3. Cart\n" +
-                "\t\t4. Logout\n" +
-                "\t\t5. Exit" +
+                "\t\t4. Exit" +
                 "---------------------------------------------------------------------\n\n" +
                 "\t\tEnter your choice : ");
     }
@@ -43,6 +39,19 @@ class Users {
         //Search product of this type | Display Results
         // with index numbers | (-1) to get Back to Main menu
 
+    }
+
+    void orders()throws Exception{
+        int user_id = (new StationaryClass()).getUser_id();
+        ResultSet rst = statement.executeQuery("SELECT time_stamp,product_id,quantity from history where user_id = " +
+                "\"" + user_id + "\"");
+        while (rst.next()){
+            ResultSet pname = statement.executeQuery("SELECT product_name from product where product_id = " +
+                    "\"" + rst.getInt(2) + "\"");
+            pname.next();
+            System.out.println("Time : " + rst.getTimestamp(1) + "\nProduct Name : " + pname.getString(1) +
+                    "\nQuantity = " + rst.getInt(3));
+        }
     }
 
     void addToCart(Integer product_id, Integer quantity) throws Exception{
@@ -85,9 +94,10 @@ class Users {
             ResultSet rst = statement.executeQuery("select actual_price,selling_price,discount from product where product_id = " +
                     "\"" + cart.get(i) + "\"");
             rst.next();
+            Timestamp tmp = new Timestamp(System.currentTimeMillis());
             int profit = (rst.getInt(2)-rst.getInt(3)-rst.getInt(1))*quantity.get(i);
-            statement.executeQuery("insert into history(user_id,product_id,quantity,profit) values("
-            + user_id + "," + cart.get(i) + "," + quantity.get(i) + "," + profit + ")");
+            statement.executeQuery("insert into history(time_stamp,user_id,product_id,quantity,profit) values("
+            + tmp +"," +user_id + "," + cart.get(i) + "," + quantity.get(i) + "," + profit + ")");
         }
     }
 
