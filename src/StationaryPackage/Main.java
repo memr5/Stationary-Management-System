@@ -2,9 +2,6 @@ package StationaryPackage;
 
 import Authentication.Authentication;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
 import java.util.Scanner;
 
 public class Main {
@@ -13,10 +10,11 @@ public class Main {
 
         Scanner in = new Scanner(System.in);
         StationaryClass obj = new StationaryClass();
-        obj.WelcomePage();
+
         boolean b = false;
         do {
             try {
+                obj.WelcomePage();
                 int choice = in.nextInt();
                 switch (choice) {
                     case 1:
@@ -34,20 +32,41 @@ public class Main {
                 System.out.println(ex.getMessage());
             }
         }while(!b);
+
         try {
-
+            obj.setUser_id();
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = Authentication.connect();
-            Statement statement = connection.createStatement();
 
-            do{
-                obj.Menu();
-                int choice = in.nextInt();
-                switch (choice){
-                    case 1:
+            if(Authentication.isAdmin(obj.getUser_name())) {
+                Admin admin = new Admin();
+                do {
+                    admin.Menu();
+                    int choice = in.nextInt();
+                    switch (choice) {
+                        case 1:
 
-                }
-            }while (true);
+                    }
+                } while (true);
+            }
+            else{
+                Users user = new Users();
+                do{
+                    user.Menu();
+                    int choice = in.nextInt();
+                    switch (choice){
+                        case 1:
+                            user.purchase_item();
+                            break;
+                        case 2:
+                            user.orders();
+                        case 3:
+                            user.showCart();
+                            break;
+                        case 4:
+                            System.exit(0);
+                    }
+                }while (true);
+            }
         }catch (Exception ex){
             System.out.println(ex.getMessage());
         }
