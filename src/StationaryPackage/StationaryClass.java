@@ -11,24 +11,13 @@ import java.util.Scanner;
 public class StationaryClass implements Pages{
 
     private String user_name;
-    static int i = 1;
+    private int user_id;
+
     public void Banner(){
         System.out.print  ("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n" +
                            "---------------------STATIONARY-MANAGEMENT-SYSTEM--------------------\n\n" +
                            "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n");
     }
-
-    public void Menu(){
-        System.out.print  ("---------------------------------MENU--------------------------------\n\n" +
-                           "\t\t1. Search\n" +
-                           "\t\t2. Your Orders\n" +
-                           "\t\t3. Cart\n" +
-                           "\t\t4. Logout\n" +
-                           "\t\t5. Exit" +
-                           "---------------------------------------------------------------------\n\n" +
-                           "\t\tEnter your choice : ");
-    }
-
 
     public void WelcomePage(){
         this.Banner();
@@ -47,22 +36,19 @@ public class StationaryClass implements Pages{
         Connection conn = Authentication.connect();
         ResultSet rst;
         try (Statement st = conn.createStatement()) {
-            rst = st.executeQuery("SELECT * FROM user WHERE user_name '" + user_name + "'");
+            rst = st.executeQuery("SELECT password FROM user WHERE user_name = '" + user_name + "'");
             if(rst.next()){
-                if(rst.getString(2).equals(password)) {
+                if(rst.getString(1).equals(password)) {
                     this.user_name = user_name;
                     return true;
                 }
                 System.out.println("WRONG PASSWORD!");
             }else{
-                System.out.println("SORRY WRONG USER NAME AND PASSWORD ");
+                System.out.println("SORRY WRONG USER NAME OR PASSWORD ");
             }
-        }catch (Exception ex){
+        }catch (Exception ex) {
             System.out.println("Exception at Search user : \n" + ex);
         }
-        //Add code to detect if user exist or not then check if the password is correct or not
-
-
 
         return false;
     }
@@ -73,21 +59,20 @@ public class StationaryClass implements Pages{
         String user_name = credentials[0];
         String password = credentials[1];
 
+        //debug
+        System.out.println(user_name + " " + password);
+
         Connection conn = Authentication.connect();
-        try (Statement st = conn.createStatement()) {
-            ResultSet rst = st.executeQuery("SELECT * FROM user WHERE user_name = '" + user_name + "'");
+        Statement st = conn.createStatement();
+        ResultSet rst = st.executeQuery("SELECT * FROM user WHERE user_name = \'" + user_name + "\'");
 
-            if (rst.next()) {
-                System.out.println("User Name already exists!");
-                return false;
-            } else {
-                this.user_name = user_name;
-                //Add code to insert new user record in user table
-
-                st.executeQuery("INSERT INTO user VALUES (" + i + ",'" + password + "','" + user_name + "')");
-                i++;
-                return true;
-            }
+        if (rst.next()) {
+            System.out.println("User Name already exists!");
+            return false;
+        } else {
+            this.user_name = user_name;
+            st.executeQuery("INSERT INTO user(type,password,user_name) VALUES (" + 0 + "," + password + "," + user_name + ")");
+            return true;
         }
     }
 
@@ -105,5 +90,22 @@ public class StationaryClass implements Pages{
         credentials[1] = password;
 
         return credentials;
+    }
+
+    public String getUser_name(){
+        return this.user_name;
+    }
+
+    public int getUser_id(){
+        return user_id;
+    }
+
+    public void setUser_id()throws Exception{
+        Connection conn = Authentication.connect();
+        Statement st = conn.createStatement();
+        ResultSet rst = st.executeQuery("SELECT user_id from user where user_name = " + "\"" +
+                user_name + "\"");
+        rst.next();
+        user_id = rst.getInt(1);
     }
 }
