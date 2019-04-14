@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class StationaryClass implements Pages{
 
     private String user_name;
-    static int i = 0;
+    static int i = 1;
     public void Banner(){
         System.out.print  ("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n" +
                            "---------------------STATIONARY-MANAGEMENT-SYSTEM--------------------\n\n" +

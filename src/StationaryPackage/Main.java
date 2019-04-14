@@ -15,7 +15,7 @@ public class Main {
         StationaryClass obj = new StationaryClass();
         obj.WelcomePage();
         boolean b = false;
-        do {
+       do {
             try {
                 int choice = in.nextInt();
                 switch (choice) {
