@@ -14,8 +14,8 @@ class Users {
     private ArrayList<Integer> quantity;
     private double cartValue;
 
-    Users() throws SQLException {
-       this.connection = Authentication.connect();
+    Users() throws Exception {
+       this.connection = (new Authentication()).connect();
        this.statement = this.connection.createStatement();
        this.cart = new ArrayList<>();
        this.quantity = new ArrayList<>();
@@ -23,16 +23,17 @@ class Users {
     }
 
     void Menu(){
-        System.out.print   ("---------------------------------MENU--------------------------------\n\n" +
+        System.out.print("---------------------------------MENU--------------------------------\n\n" +
                 "\t\t1. Search\n" +
                 "\t\t2. Your Orders\n" +
                 "\t\t3. Cart\n" +
-                "\t\t4. Exit" +
+                "\t\t4. Exit\n" +
                 "---------------------------------------------------------------------\n\n" +
                 "\t\tEnter your choice : ");
     }
 
     void orders()throws Exception{
+        Class.forName("com.mysql.cj.jdbc.Driver");
         int user_id = (new StationaryClass()).getUser_id();
         ResultSet rst = statement.executeQuery("SELECT time_stamp,product_id,quantity from history where user_id = " +
                 "\"" + user_id + "\"");
@@ -43,9 +44,11 @@ class Users {
             System.out.println("Time : " + rst.getTimestamp(1) + "\nProduct Name : " + pname.getString(1) +
                     "\nQuantity = " + rst.getInt(3));
         }
+
     }
 
-    void addToCart(Integer product_id, Integer quantity) throws Exception{
+    private void addToCart(Integer product_id, Integer quantity) throws Exception{
+        Class.forName("com.mysql.cj.jdbc.Driver");
         ResultSet rst = statement.executeQuery("SELECT selling_price,discount from product where product_id = " + "\"" +
                 product_id + "\"");
         rst.next();
@@ -54,7 +57,8 @@ class Users {
         this.quantity.add(quantity);
     }
 
-    void removeFromCart(int product_index)throws Exception{
+    private void removeFromCart(int product_index)throws Exception{
+
         ResultSet rst = statement.executeQuery("SELECT selling_price,discount from product where product_id = " + "\"" +
                 cart.get(product_index) + "\"");
         rst.next();
@@ -64,12 +68,13 @@ class Users {
     }
 
     void checkout() throws Exception{
+        Class.forName("com.mysql.cj.jdbc.Driver");
         for (int i=0;i<cart.size();i++){
             ResultSet rst = statement.executeQuery("SELECT quantity from product where product_id = " + "\"" +
                     cart.get(i) + "\"");
             rst.next();
             int new_quantity = rst.getInt(1) - quantity.get(i);
-            statement.executeQuery("update product set quantity =" + new_quantity + "where product_id = " + "\"" +
+            statement.executeUpdate("update product set quantity =" + new_quantity + "where product_id = " + "\"" +
                     cart.get(i) + "\"");
         }
         updateSellingHistory();
@@ -79,7 +84,8 @@ class Users {
                            "\nPay the Bill!");
     }
 
-    void updateSellingHistory() throws Exception{
+    private void updateSellingHistory() throws Exception{
+        Class.forName("com.mysql.cj.jdbc.Driver");
         int user_id = (new StationaryClass()).getUser_id();
         for(int i=0;i<cart.size();i++){
             ResultSet rst = statement.executeQuery("select actual_price,selling_price,discount from product where product_id = " +
@@ -87,7 +93,7 @@ class Users {
             rst.next();
             Timestamp tmp = new Timestamp(System.currentTimeMillis());
             int profit = (rst.getInt(2)-rst.getInt(3)-rst.getInt(1))*quantity.get(i);
-            statement.executeQuery("insert into history(time_stamp,user_id,product_id,quantity,profit) values("
+            statement.executeUpdate("insert into history(time_stamp,user_id,product_id,quantity,profit) values("
             + tmp +"," +user_id + "," + cart.get(i) + "," + quantity.get(i) + "," + profit + ")");
         }
     }
@@ -135,23 +141,20 @@ class Users {
         }while(true);
     }
 
-    void show_product_type(){
-
+    private void show_product_type() throws Exception{
+        Class.forName("com.mysql.cj.jdbc.Driver");
         try {
-            Connection con = Authentication.connect();
-            ResultSet rst;
-            Statement st = con.createStatement();
-            rst = st.executeQuery("SELECT DISTINCT type_of_product FROM product ");
+            ResultSet rst = statement.executeQuery("SELECT DISTINCT type_of_product FROM product ");
             while (rst.next()) {
                 System.out.println(rst.getString(1));
             }
-            con.close();
         }catch (Exception ex){
             System.out.println(ex.getMessage());
         }
     }
 
-    void  purchase_item() {
+    void  purchase_item() throws Exception{
+        Class.forName("com.mysql.cj.jdbc.Driver");
         float After_Discount_Price;
         int buy_quantity;
         int break_loop1 = 0;
@@ -167,11 +170,9 @@ class Users {
             String product_type = sc.nextLine();
             String upper_product_type = product_type.toUpperCase();
             try {
-                Connection con = Authentication.connect();
-                Statement st = con.createStatement();
                 int index = 1;
                 do {
-                    ResultSet rst = st.executeQuery("SELECT * FROM product WHERE type_of_product = '" + upper_product_type + "'");
+                    ResultSet rst = statement.executeQuery("SELECT * FROM product WHERE type_of_product = '" + upper_product_type + "'");
                     while (rst.next()) {
                         System.out.println(index++ + ")    " + rst.getString(3) + "[" + rst.getInt(8) + "]");
                         System.out.println("        Selling Price : " + rst.getInt(5));
@@ -244,7 +245,7 @@ class Users {
                 } while (break_loop2 != 1);
 
             } catch (Exception ex) {
-                System.out.println(ex);
+                System.out.println(ex.getMessage());
             }
         } while (break_loop2 != 1);
 
