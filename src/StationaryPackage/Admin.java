@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 public class Admin extends Users{
 
-    Admin() throws SQLException {
+    Admin() throws Exception {
         super();
     }
 

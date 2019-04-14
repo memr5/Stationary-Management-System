@@ -1,10 +1,8 @@
 package StationaryPackage;
 
-import java.sql.SQLException;
-
 public interface Pages {
     void Banner();
     void WelcomePage();
-    boolean Login() throws SQLException;
-    boolean Sign_up() throws SQLException;
+    int Login() throws Exception;
+    int Sign_up() throws Exception;
 }
