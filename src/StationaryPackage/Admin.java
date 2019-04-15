@@ -98,7 +98,7 @@ public class Admin extends Users{
                 resultSet.next();
             }
 
-            ResultSet removeRst = getConnection().createStatement().executeQuery("DELETE from product where " +
+            getConnection().createStatement().executeUpdate("DELETE from product where " +
                     "product_id = " + resultSet.getInt(1));
             System.out.println("\nDeleted!\n");
 
