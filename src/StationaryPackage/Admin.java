@@ -13,28 +13,30 @@ public class Admin extends Users{
         super();
     }
 
-    public void Menu(){
-        System.out.print   ("---------------------------------MENU--------------------------------\n\n" +
+    void Menu(){
+        System.out.print   ("\n\n---------------------------------MENU--------------------------------\n\n" +
                             "\t\t1. Search\n" +
                             "\t\t2. Your Orders\n" +
                             "\t\t3. Cart\n" +
-                            "\t\t4. Manipulate Data" +
-                            "\t\t5. Report" +
-                            "\t\t6. Exit" +
-                            "---------------------------------------------------------------------\n\n" +
+                            "\t\t4. Manipulate Data\n" +
+                            "\t\t5. Report\n" +
+                            "\t\t6. Exit\n" +
+                            "\n\n---------------------------------------------------------------------\n\n" +
                             "\t\tEnter your choice : ");
     }
 
-
-    public  void  manipulateData(){
-        System.out.println("---------------------------------MENU--------------------------------\n\n"+
+    void  manipulateData(){
+        System.out.println ("\n\n------------------------------MANIPULATE DATA----------------------------\n\n"+
                             "\t\t1. Add Item\n"+
                             "\t\t2. Remove Item\n"+
                             "\t\t2. Add Quantity\n"+
                             "\t\t3. Remove Quantity\n"+
-                            "\t\t4. Back");
+                            "\t\t4. Back\n" +
+                            "\n\n--------------------------------------------------------------------------\n\n");
     }
-    public void Add_Item() throws Exception{
+
+    private void Add_Item() throws Exception{
+
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Which type of item you want to add : ");
@@ -59,37 +61,46 @@ public class Admin extends Users{
         System.out.print("Quantity :");
         int quantity = sc.nextInt();
 
-        Connection connection = (new Authentication()).connect();
-        Statement statement = connection.createStatement();
+        Statement statement = getStatement();
         statement.executeUpdate("INSERT INTO product(type_of_product,produt_name,actual_price," +
                                     "selling_price,discount,specification,quantity) values " + "(\"" + item_type + "\",\"" +
                                      product_name + "\"," + actual_price + "," + selling_price + "," + discount + ",\"" +
                                      specification + "\"," + quantity +")"  );
-        //Add item is already added or not
+        System.out.println("\nItem Added!\n");
     }
 
 
     public void remove_item()throws Exception{
+
         Scanner sc = new Scanner(System.in);
         show_product_type();
-        System.out.print("In Which Type of product you want to remove item :");
+        System.out.print("\nWhich Type of product you want to remove item :");
         String item_type = sc.nextLine();
         item_type = item_type.toUpperCase();
 
-        Connection connection = (new Authentication()).connect();
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("select * from product where type_of_product ='" + item_type + "'");
+        Statement statement = getStatement();
+        ResultSet resultSet = statement.executeQuery("select * from product where type_of_product = '" + item_type + "'");
+
         if(resultSet.next()){
-             //Enter type of product is available
+
             resultSet.beforeFirst();
             int index = 1;
+            System.out.println("\nAvailable products of type : " + item_type);
             while (resultSet.next()){
-                System.out.println("\n" + index++ + ")    " + resultSet.getString(3) + "[" + resultSet.getInt(8) + "]");
+                System.out.println("\n" + index++ + ")    " + resultSet.getString(3) + " [" + resultSet.getInt(8) + "]");
             }
-            System.out.print("\nWhich product you want to remove \nEnter product number : ");
+
+            System.out.print("\nWhich product you want to remove?\nEnter product number : ");
             int remove_product_number = sc.nextInt();
 
-            // delete row @remove_product_number in purchase table
+            resultSet.beforeFirst();
+            for (int i=0;i<remove_product_number;i++){
+                resultSet.next();
+            }
+
+            ResultSet removeRst = getConnection().createStatement().executeQuery("DELETE from product where " +
+                    "product_id = " + resultSet.getInt(1));
+            System.out.println("\nDeleted!\n");
 
         }else{
             System.out.print("That product is not available ");
@@ -102,7 +113,7 @@ public class Admin extends Users{
     }
 
 
-    public void report(){
+    void report(){
 
     }
 
