@@ -37,12 +37,17 @@ class Users {
         int user_id = StationaryClass.getUser_id();
         System.out.println("\n\t\tPurchase History : ");
         ResultSet rst = statement.executeQuery("SELECT time_stamp,product_id,quantity from history where user_id = " + user_id);
-        while (rst.next()){
-            Statement s = connection.createStatement();
-            ResultSet pname = s.executeQuery("SELECT product_name from product where product_id = " + rst.getInt(2));
-            pname.next();
-            System.out.println("\n\t\tTime : " + rst.getTimestamp(1) + "\n\t\tProduct Name : " + pname.getString(1) +
-                    "\n\t\tQuantity : " + rst.getInt(3));
+        if(rst.next()){
+            rst.beforeFirst();
+            while (rst.next()){
+                Statement s = connection.createStatement();
+                ResultSet pname = s.executeQuery("SELECT product_name from product where product_id = " + rst.getInt(2));
+                pname.next();
+                System.out.println("\n\t\tTime : " + rst.getTimestamp(1) + "\n\t\tProduct Name : " + pname.getString(1) +
+                        "\n\t\tQuantity : " + rst.getInt(3));
+            }
+        }else{
+            System.out.print("Sorry you have no Purchase History");
         }
 
     }
