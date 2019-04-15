@@ -2,6 +2,7 @@ package StationaryPackage;
 
 import Authentication.Authentication;
 
+import javax.management.Query;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -134,7 +135,59 @@ public class Admin extends Users{
         }
     }
 
-    private void changeQuantity(){
+    private void changeQuantity ()throws  Exception{
+        Scanner sc = new Scanner(System.in);
+        show_product_type();
+        System.out.print("Type Of Product :");
+        String type_Of_item = sc.nextLine();
+
+        Statement statement = getStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM product where type_of_product = '" + type_Of_item +"'");
+
+        if(resultSet.next()){
+            resultSet.beforeFirst();
+            int index = 1;
+            System.out.println("\nAvailable products of type : " + type_Of_item);
+            while (resultSet.next()){
+                System.out.println("\n" + index++ + ")    " + resultSet.getString(3) + " [" + resultSet.getInt(8) + "]");
+            }
+            System.out.print("\nitem Number :");
+            int item_number = sc.nextInt();
+
+            resultSet.beforeFirst();
+            for (int i=0;i<item_number;i++){
+                resultSet.next();
+            }
+            int product_id = resultSet.getInt(1);
+            int selection;
+            int quantity = 0;
+            do {
+                System.out.print("\n1.   Add\n2.   Remove");
+                selection = sc.nextInt();
+                switch (selection){
+                    case 1:
+                        System.out.print("how many quantity you want ot add :");
+                        quantity = sc.nextInt();
+                        quantity = quantity + resultSet.getInt(8);
+                        break;
+                    case 2:
+                        System.out.print("how many quantity you want to remove :");
+                        quantity = sc.nextInt();
+                        if(quantity > resultSet.getInt(8)){
+                            System.out.print("\nsorry We have not much quantity ");
+                        }else {
+                            quantity = resultSet.getInt(8) - quantity;
+                        }
+                        break;
+                     default:
+                         System.out.print("Enter valid choice :");
+                }
+            }while (selection!= 1 || selection != 2);
+
+            getConnection().createStatement().executeUpdate("update product set quantity = \"" + quantity +" where product_id = " + product_id);
+        }else{
+            System.out.print("that type of item is not available ");
+        }
 
     }
 
