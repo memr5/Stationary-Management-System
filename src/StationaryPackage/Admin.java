@@ -1,7 +1,5 @@
 package StationaryPackage;
 
-import java.sql.SQLException;
-
 public class Admin extends Users{
 
     Admin() throws Exception {

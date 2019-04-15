@@ -9,8 +9,8 @@ import java.util.Scanner;
 
 public class StationaryClass implements Pages{
 
-    private String user_name;
-    private int user_id;
+    private static String user_name;
+    private static int user_id;
 
     public void Banner(){
         System.out.print  ("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n" +
@@ -32,12 +32,11 @@ public class StationaryClass implements Pages{
         String user_name = credentials[0];
         String password = credentials[1];
 
-        Class.forName("com.mysql.cj.jdbc.Driver");
         Connection connection = (new Authentication()).connect();
         ResultSet rst;
         try (Statement statement = connection.createStatement()) {
             rst = statement.executeQuery("SELECT password FROM user WHERE user_name = '" + user_name + "'");
-            connection.close();
+
             if(rst.next()){
                 if(rst.getString(1).equals(password)) {
                     this.user_name = user_name;
@@ -60,22 +59,16 @@ public class StationaryClass implements Pages{
         String user_name = credentials[0];
         String password = credentials[1];
 
-        //debug
-        System.out.println(user_name + " " + password);
-
-        Class.forName("com.mysql.cj.jdbc.Driver");
         Connection connection = (new Authentication()).connect();
         Statement statement = connection.createStatement();
         ResultSet rst = statement.executeQuery("SELECT * FROM user WHERE user_name = \'" + user_name + "\'");
 
         if (rst.next()) {
             System.out.println("User Name already exists!");
-            //connection.close();
             return 0;
         } else {
             this.user_name = user_name;
             statement.executeUpdate("INSERT INTO user(type,password,user_name) VALUES (" + 0 + ",\"" + password + "\",\"" + user_name + "\")");
-            //connection.close();
             return 1;
         }
     }
@@ -87,7 +80,6 @@ public class StationaryClass implements Pages{
         String user_name = in.nextLine();
         System.out.print("\t\tPassword : ");
         String password = in.nextLine();
-        in.close();
 
         String[] credentials = new String[2];
         credentials[0] = user_name;
@@ -96,22 +88,20 @@ public class StationaryClass implements Pages{
         return credentials;
     }
 
-    String getUser_name(){
-        return this.user_name;
+    static String getUser_name(){
+        return user_name;
     }
 
-    int getUser_id(){
+    static int getUser_id(){
         return user_id;
     }
 
-    void setUser_id() throws Exception{
-        Class.forName("com.mysql.cj.jdbc.Driver");
+    static void setUser_id() throws Exception{
         Connection connection = (new Authentication()).connect();
         Statement statement = connection.createStatement();
         ResultSet rst = statement.executeQuery("SELECT user_id from user where user_name = " + "\"" +
                 user_name + "\"");
         rst.next();
         user_id = rst.getInt(1);
-        //connection.close();
     }
 }

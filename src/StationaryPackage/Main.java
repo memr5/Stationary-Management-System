@@ -6,15 +6,16 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String [] args){
+    public static void main(String [] args) {
 
-        Scanner in = new Scanner(System.in);
         StationaryClass obj = new StationaryClass();
+        Scanner in = new Scanner(System.in);
         int b = 0;
-        do {
-            try {
+        int choice;
+        try{
+            do {
                 obj.WelcomePage();
-                int choice = in.nextInt();
+                choice = in.nextInt();
                 switch (choice) {
                     case 1:
                         b = obj.Login();
@@ -24,21 +25,23 @@ public class Main {
                         break;
                     case 3:
                         System.exit(0);
+                    default:
+                        System.out.println("\nEnter valid choice!\n");
                 }
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
-        }while(b!=1);
+            } while (b != 1);
+        }catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
 
         try {
-            obj.setUser_id();
+            StationaryClass.setUser_id();
 
-            if(Authentication.isAdmin(obj.getUser_name())) {
+            if(Authentication.isAdmin(StationaryClass.getUser_name())) {
                 Admin admin = new Admin();
                 do {
                     admin.Menu();
-                    int achoice = in.nextInt();
-                    switch (achoice) {
+                    choice = in.nextInt();
+                    switch (choice) {
                         case 1:
                             admin.purchase_item();
                             break;
@@ -52,6 +55,8 @@ public class Main {
                         case 5:
                         case 6:
                             System.exit(0);
+                        default:
+                            System.out.println("\nEnter valid choice!\n");
                     }
                 } while (true);
             }
@@ -59,9 +64,8 @@ public class Main {
                 Users user = new Users();
                 do{
                     user.Menu();
-                    in.next();
-                    int uchoice = in.nextInt();
-                    switch (uchoice){
+                    choice = in.nextInt();
+                    switch (choice){
                         case 1:
                             user.purchase_item();
                             break;
@@ -73,6 +77,8 @@ public class Main {
                             break;
                         case 4:
                             System.exit(0);
+                        default:
+                            System.out.println("\nEnter valid choice!\n");
                     }
                 }while (true);
             }
