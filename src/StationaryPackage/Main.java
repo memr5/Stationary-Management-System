@@ -1,3 +1,13 @@
+
+/////////////////////////////////////////////////////////////////////////////////////
+//                                                                                 //
+//                           STATIONARY-MANAGEMENT-SYSTEM                          //
+//                                                                                 //
+//                           Authors : ✔ @Vatsalparsaniya                          //
+//                                     ✔ @memr5                                    //
+//                                                                                 //
+/////////////////////////////////////////////////////////////////////////////////////
+
 package StationaryPackage;
 
 import Authentication.Authentication;
@@ -5,7 +15,7 @@ import Authentication.Authentication;
 import java.util.Scanner;
 
 public class Main {
-
+                                                                                                                                                                                                                                                                                                      // Authors : @Vatsalparsaniya &  @memr5
     public static void main(String [] args) {
 
         StationaryClass obj = new StationaryClass();
