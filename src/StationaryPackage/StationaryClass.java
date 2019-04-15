@@ -1,3 +1,13 @@
+
+/////////////////////////////////////////////////////////////////////////////////////
+//                                                                                 //
+//                           STATIONARY-MANAGEMENT-SYSTEM                          //
+//                                                                                 //
+//                           Authors : ✔ @Vatsalparsaniya                          //
+//                                     ✔ @memr5                                    //
+//                                                                                 //
+/////////////////////////////////////////////////////////////////////////////////////
+
 package StationaryPackage;
 
 import Authentication.Authentication;
@@ -67,7 +77,7 @@ public class StationaryClass implements Pages{
             System.out.println("User Name already exists!");
             return 0;
         } else {
-            this.user_name = user_name;
+            StationaryClass.user_name = user_name;
             statement.executeUpdate("INSERT INTO user(type,password,user_name) VALUES (" + 0 + ",\"" + password + "\",\"" + user_name + "\")");
             return 1;
         }
