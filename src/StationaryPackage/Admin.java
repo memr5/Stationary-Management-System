@@ -1,15 +1,10 @@
 package StationaryPackage;
 
-import Authentication.Authentication;
-
-import javax.management.Query;
-import java.awt.*;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Scanner;
 
-public class Admin extends Users{
+class Admin extends Users{
 
     Admin() throws Exception {
         super();
@@ -17,14 +12,14 @@ public class Admin extends Users{
 
     void Menu(){
         System.out.print   ("\n\n---------------------------------MENU--------------------------------\n\n" +
-                            "\t\t1. Search\n" +
-                            "\t\t2. Your Orders\n" +
-                            "\t\t3. Cart\n" +
-                            "\t\t4. Manipulate Data\n" +
-                            "\t\t5. Report\n" +
-                            "\t\t6. Exit\n" +
-                            "\n\n---------------------------------------------------------------------\n\n" +
-                            "\t\tEnter your choice : ");
+                "\t\t1. Search\n" +
+                "\t\t2. Your Orders\n" +
+                "\t\t3. Cart\n" +
+                "\t\t4. Manipulate Data\n" +
+                "\t\t5. Report\n" +
+                "\t\t6. Exit\n" +
+                "\n\n---------------------------------------------------------------------\n\n" +
+                "\t\tEnter your choice : ");
     }
 
     void  manipulateData() throws Exception{
@@ -33,11 +28,11 @@ public class Admin extends Users{
 
         do{
             System.out.println ("\n\n------------------------------MANIPULATE DATA----------------------------\n\n"+
-                                "\t\t1. Add Item\n"+
-                                "\t\t2. Remove Item\n"+
-                                "\t\t3. Change Quantity\n"+
-                                "\t\t4. Back\n" +
-                                "\n\n--------------------------------------------------------------------------\n\n");
+                    "\t\t1. Add Item\n"+
+                    "\t\t2. Remove Item\n"+
+                    "\t\t3. Change Quantity\n"+
+                    "\t\t4. Back\n" +
+                    "\n\n--------------------------------------------------------------------------\n\n");
 
             System.out.print("\t\tYour choice : ");
             Scanner in = new Scanner(System.in);
@@ -67,7 +62,7 @@ public class Admin extends Users{
 
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Which type of item you want to add : ");
+        System.out.print("\nWhich type of item you want to add : ");
         String item_type = sc.nextLine();
         item_type = item_type.toUpperCase();
 
@@ -83,6 +78,7 @@ public class Admin extends Users{
         System.out.print("Discount :");
         int discount = sc.nextInt();
 
+        sc.nextLine();
         System.out.print("Specification :");
         String specification = sc.nextLine();
 
@@ -90,10 +86,10 @@ public class Admin extends Users{
         int quantity = sc.nextInt();
 
         Statement statement = getStatement();
-        statement.executeUpdate("INSERT INTO product(type_of_product,produt_name,actual_price," +
-                                    "selling_price,discount,specification,quantity) values " + "(\"" + item_type + "\",\"" +
-                                     product_name + "\"," + actual_price + "," + selling_price + "," + discount + ",\"" +
-                                     specification + "\"," + quantity +")"  );
+        statement.executeUpdate("INSERT INTO product(type_of_product,product_name,actual_price," +
+                "selling_price,discount,specification,quantity) values" + "(\"" + item_type + "\",\"" +
+                product_name + "\"," + actual_price + "," + selling_price + "," + discount + ",\"" +
+                specification + "\"," + quantity +")"  );
         System.out.println("\nItem Added!\n");
     }
 
@@ -136,9 +132,10 @@ public class Admin extends Users{
     }
 
     private void changeQuantity ()throws  Exception{
+
         Scanner sc = new Scanner(System.in);
         show_product_type();
-        System.out.print("Type Of Product :");
+        System.out.print("\nType Of Product :");
         String type_Of_item = sc.nextLine();
 
         Statement statement = getStatement();
@@ -146,11 +143,14 @@ public class Admin extends Users{
 
         if(resultSet.next()){
             resultSet.beforeFirst();
+
             int index = 1;
             System.out.println("\nAvailable products of type : " + type_Of_item);
+
             while (resultSet.next()){
                 System.out.println("\n" + index++ + ")    " + resultSet.getString(3) + " [" + resultSet.getInt(8) + "]");
             }
+
             System.out.print("\nitem Number :");
             int item_number = sc.nextInt();
 
@@ -158,41 +158,58 @@ public class Admin extends Users{
             for (int i=0;i<item_number;i++){
                 resultSet.next();
             }
+
             int product_id = resultSet.getInt(1);
             int selection;
             int quantity = 0;
+
             do {
-                System.out.print("\n1.   Add\n2.   Remove");
+                System.out.print("\n\t\t1. Add\n\t\t2. Remove");
+                System.out.print("\n\t\tYour choice : ");
                 selection = sc.nextInt();
+
                 switch (selection){
                     case 1:
-                        System.out.print("how many quantity you want ot add :");
+                        System.out.print("How many items you want ot add :");
                         quantity = sc.nextInt();
                         quantity = quantity + resultSet.getInt(8);
                         break;
                     case 2:
-                        System.out.print("how many quantity you want to remove :");
+                        System.out.print("How many items you want to remove :");
                         quantity = sc.nextInt();
                         if(quantity > resultSet.getInt(8)){
-                            System.out.print("\nsorry We have not much quantity ");
+                            System.out.print("\nSorry that many items not available : ");
                         }else {
                             quantity = resultSet.getInt(8) - quantity;
                         }
                         break;
-                     default:
-                         System.out.print("Enter valid choice :");
+                    default:
+                        System.out.print("\nEnter valid choice!\n");
                 }
-            }while (selection!= 1 || selection != 2);
+            }while (selection!= 1 && selection != 2);
 
-            getConnection().createStatement().executeUpdate("update product set quantity = \"" + quantity +" where product_id = " + product_id);
+            getConnection().createStatement().executeUpdate("update product set quantity = " + quantity + " where product_id = " + product_id);
+            System.out.println("\nQuantity Updated!\n");
         }else{
-            System.out.print("that type of item is not available ");
+            System.out.print("\nThat type of item is not available\n");
         }
 
     }
 
-    void report(){
+    void report() throws Exception{
 
+        System.out.println("\nSale Report : ");
+        ResultSet resultSet = getStatement().executeQuery("select quantity,profit from history");
+
+        double totalProfit = 0;
+        int totalProducts = 0;
+
+        while (resultSet.next()){
+            totalProducts += resultSet.getInt(1);
+            totalProfit += resultSet.getDouble(2);
+        }
+
+        System.out.println("\n\t\tTotal Products sold : " + totalProducts + "\n\t\tTotal Profit : " + totalProfit);
     }
 
 }

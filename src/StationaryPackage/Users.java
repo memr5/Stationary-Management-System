@@ -35,19 +35,15 @@ class Users {
     void orders()throws Exception{
 
         int user_id = StationaryClass.getUser_id();
-        System.out.println("\n\t\tPurchase History : ");
+
+        System.out.println("\nPurchase History : ");
         ResultSet rst = statement.executeQuery("SELECT time_stamp,product_id,quantity from history where user_id = " + user_id);
-        if(rst.next()){
-            rst.beforeFirst();
-            while (rst.next()){
-                Statement s = connection.createStatement();
-                ResultSet pname = s.executeQuery("SELECT product_name from product where product_id = " + rst.getInt(2));
-                pname.next();
-                System.out.println("\n\t\tTime : " + rst.getTimestamp(1) + "\n\t\tProduct Name : " + pname.getString(1) +
-                        "\n\t\tQuantity : " + rst.getInt(3));
-            }
-        }else{
-            System.out.print("Sorry you have no Purchase History");
+        while (rst.next()){
+            Statement s = connection.createStatement();
+            ResultSet pname = s.executeQuery("SELECT product_name from product where product_id = " + rst.getInt(2));
+            pname.next();
+            System.out.println("\nTime : " + rst.getTimestamp(1) + "\nProduct Name : " + pname.getString(1) +
+                    "\nQuantity : " + rst.getInt(3));
         }
 
     }
@@ -75,7 +71,7 @@ class Users {
     private void checkout() throws Exception{
 
         if(cart.size()==0){
-            System.out.println("\n\t\tEmpty Cart!\n");
+            System.out.println("\nEmpty Cart!\n");
             return;
         }
         for (int i=0;i<cart.size();i++){
@@ -89,8 +85,8 @@ class Users {
         updateSellingHistory();
         cart.clear();
         quantity.clear();
-        System.out.println("\t\tCart Value : " + cartValue +
-                           "\n\t\tPay the Bill!");
+        System.out.println("Cart Value : " + cartValue +
+                           "\nPay the Bill!");
     }
 
     private void updateSellingHistory() throws Exception{
@@ -111,14 +107,14 @@ class Users {
         int choice;
         Scanner in = new Scanner(System.in);
         do {
-            System.out.println("\n\t\tYour CART : ");
+            System.out.println("\nYour CART : ");
             if(cart.size()==0){
-                System.out.println("\t\t(Cart is Empty)");
+                System.out.println("(Cart is Empty)");
             }
             for (int i = 0; i < cart.size(); i++) {
                 ResultSet rst = statement.executeQuery("select product_name from product where product_id = " + cart.get(i));
                 rst.next();
-                System.out.println("\t\t"+i+1 + ") " + rst.getString(1) + " | Quantity : " + quantity.get(i));
+                System.out.println(i+1 + ") " + rst.getString(1) + " | Quantity : " + quantity.get(i));
             }
             System.out.print("---------------------------------------------------------------------\n" + (cart.size()+1) + ") " + "Checkout\n" +
                     (cart.size() + 2) + ") " + "Back to menu\n" +
@@ -126,34 +122,34 @@ class Users {
 
             choice = in.nextInt();
             if (choice > 0 && choice <= cart.size()) {
-                System.out.print(  "\t\t1) " + "Remove item\n" +
-                                   "\t\t2) " + "Change Quantity\n" +
-                                   "\t\t3) " + "Back\n" +
-                                   "\t\tChoice : ");
+                System.out.print(  "1) " + "Remove item\n" +
+                                   "2) " + "Change Quantity\n" +
+                                   "3) " + "Back\n" +
+                                   "Choice : ");
                 int c = in.nextInt();
                 switch (c){
                     case 1:
                         removeFromCart(choice-1);
-                        System.out.println("\n\t\tRemoved!\n");
+                        System.out.println("\nRemoved!\n");
                         break;
                     case 2:
-                        System.out.print("\t\tEnter new quantity : ");
+                        System.out.print("Enter new quantity : ");
                         int q = in.nextInt();
                         ResultSet rst = statement.executeQuery("select quantity from product where product_id = "
                         + cart.get(choice-1));
                         rst.next();
                         if(rst.getInt(1) >= q){
                             quantity.set(choice-1, q);
-                            System.out.println("\n\t\tChanged!\n");
+                            System.out.println("\nChanged!\n");
                         }
                         else {
-                            System.out.println("\t\tOnly " + rst.getInt(1) + " Available");
+                            System.out.println("Only " + rst.getInt(1) + " Available");
                         }
                         break;
                     case 3:
                         break;
                     default:
-                        System.out.println("\n\t\tEnter valid choice!\n");
+                        System.out.println("\nEnter valid choice!\n");
                 }
             }
             else if(choice == cart.size()+1){
@@ -167,11 +163,11 @@ class Users {
     }
 
     void show_product_type(){
-        System.out.println("\n\t\tTypes of products available : \n");
+        System.out.println("\nTypes of products available : \n");
         try {
             ResultSet rst = statement.executeQuery("SELECT DISTINCT type_of_product FROM product ");
             while (rst.next()) {
-                System.out.println("\t\t"+rst.getString(1));
+                System.out.println(rst.getString(1));
             }
         }catch (Exception ex){
             System.out.println(ex.getMessage());
@@ -183,17 +179,15 @@ class Users {
         float After_Discount_Price;
         int buy_quantity;
 
-        int break_loop1 = 0;
-        int break_loop2 = 0;
-        int break_loop3 = 0;
-        int break_loop4 = 0;
-        int item_Number = 0;
+        int break_loop1;
+        int break_loop2;
+        int break_loop3;
+        int break_loop4;
+        int item_Number;
 
         do {
-            break_loop1 = 0;
+
             break_loop2 = 0;
-            break_loop3 = 0;
-            break_loop4 = 0;
             item_Number = 0;
             this.show_product_type();
             System.out.println("\n\t\t-1) Back to Menu");
