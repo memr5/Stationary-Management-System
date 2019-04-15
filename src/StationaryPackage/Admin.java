@@ -134,11 +134,9 @@ public class Admin extends Users{
         }
     }
 
-
     private void changeQuantity(){
 
     }
-
 
     void report(){
 

@@ -161,7 +161,7 @@ class Users {
         }while(true);
     }
 
-    private void show_product_type(){
+    void show_product_type(){
         System.out.println("\nTypes of products available : \n");
         try {
             ResultSet rst = statement.executeQuery("SELECT DISTINCT type_of_product FROM product ");
@@ -279,23 +279,11 @@ class Users {
 
     }
 
-    Connection getConnection(){
-        return this.connection;
-    }
-
     Statement getStatement(){
         return this.statement;
     }
 
-    ArrayList<Integer> getCart(){
-        return this.cart;
-    }
-
-    ArrayList<Integer> getQuantity(){
-        return this.quantity;
-    }
-
-    double getCartValue(){
-        return this.cartValue;
+    Connection getConnection(){
+        return connection;
     }
 }
