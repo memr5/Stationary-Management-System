@@ -2,6 +2,7 @@ package StationaryPackage;
 
 import Authentication.Authentication;
 
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -25,17 +26,43 @@ public class Admin extends Users{
                             "\t\tEnter your choice : ");
     }
 
-    void  manipulateData(){
-        System.out.println ("\n\n------------------------------MANIPULATE DATA----------------------------\n\n"+
-                            "\t\t1. Add Item\n"+
-                            "\t\t2. Remove Item\n"+
-                            "\t\t2. Add Quantity\n"+
-                            "\t\t3. Remove Quantity\n"+
-                            "\t\t4. Back\n" +
-                            "\n\n--------------------------------------------------------------------------\n\n");
+    void  manipulateData() throws Exception{
+
+        int choice;
+
+        do{
+            System.out.println ("\n\n------------------------------MANIPULATE DATA----------------------------\n\n"+
+                                "\t\t1. Add Item\n"+
+                                "\t\t2. Remove Item\n"+
+                                "\t\t3. Change Quantity\n"+
+                                "\t\t4. Back\n" +
+                                "\n\n--------------------------------------------------------------------------\n\n");
+
+            System.out.print("\t\tYour choice : ");
+            Scanner in = new Scanner(System.in);
+            choice = in.nextInt();
+
+            if(choice==4){
+                break;
+            }
+
+            switch (choice) {
+                case 1:
+                    addItem();
+                    break;
+                case 2:
+                    removeItem();
+                    break;
+                case 3:
+                    changeQuantity();
+                    break;
+                default:
+                    System.out.println("\nEnter Valid choice!\n");
+            }
+        }while(true);
     }
 
-    private void Add_Item() throws Exception{
+    private void addItem() throws Exception{
 
         Scanner sc = new Scanner(System.in);
 
@@ -70,7 +97,7 @@ public class Admin extends Users{
     }
 
 
-    public void remove_item()throws Exception{
+    private void removeItem()throws Exception{
 
         Scanner sc = new Scanner(System.in);
         show_product_type();
@@ -108,7 +135,7 @@ public class Admin extends Users{
     }
 
 
-    public void AddQuantity(){
+    private void changeQuantity(){
 
     }
 
