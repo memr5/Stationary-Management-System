@@ -35,14 +35,14 @@ class Users {
     void orders()throws Exception{
 
         int user_id = StationaryClass.getUser_id();
-        System.out.println("\nPurchase History : ");
+        System.out.println("\n\t\tPurchase History : ");
         ResultSet rst = statement.executeQuery("SELECT time_stamp,product_id,quantity from history where user_id = " + user_id);
         while (rst.next()){
             Statement s = connection.createStatement();
             ResultSet pname = s.executeQuery("SELECT product_name from product where product_id = " + rst.getInt(2));
             pname.next();
-            System.out.println("\nTime : " + rst.getTimestamp(1) + "\nProduct Name : " + pname.getString(1) +
-                    "\nQuantity : " + rst.getInt(3));
+            System.out.println("\n\t\tTime : " + rst.getTimestamp(1) + "\n\t\tProduct Name : " + pname.getString(1) +
+                    "\n\t\tQuantity : " + rst.getInt(3));
         }
 
     }
@@ -70,7 +70,7 @@ class Users {
     private void checkout() throws Exception{
 
         if(cart.size()==0){
-            System.out.println("\nEmpty Cart!\n");
+            System.out.println("\n\t\tEmpty Cart!\n");
             return;
         }
         for (int i=0;i<cart.size();i++){
@@ -84,8 +84,8 @@ class Users {
         updateSellingHistory();
         cart.clear();
         quantity.clear();
-        System.out.println("Cart Value : " + cartValue +
-                           "\nPay the Bill!");
+        System.out.println("\t\tCart Value : " + cartValue +
+                           "\n\t\tPay the Bill!");
     }
 
     private void updateSellingHistory() throws Exception{
@@ -106,14 +106,14 @@ class Users {
         int choice;
         Scanner in = new Scanner(System.in);
         do {
-            System.out.println("\nYour CART : ");
+            System.out.println("\n\t\tYour CART : ");
             if(cart.size()==0){
-                System.out.println("(Cart is Empty)");
+                System.out.println("\t\t(Cart is Empty)");
             }
             for (int i = 0; i < cart.size(); i++) {
                 ResultSet rst = statement.executeQuery("select product_name from product where product_id = " + cart.get(i));
                 rst.next();
-                System.out.println(i+1 + ") " + rst.getString(1) + " | Quantity : " + quantity.get(i));
+                System.out.println("\t\t"+i+1 + ") " + rst.getString(1) + " | Quantity : " + quantity.get(i));
             }
             System.out.print("---------------------------------------------------------------------\n" + (cart.size()+1) + ") " + "Checkout\n" +
                     (cart.size() + 2) + ") " + "Back to menu\n" +
@@ -121,34 +121,34 @@ class Users {
 
             choice = in.nextInt();
             if (choice > 0 && choice <= cart.size()) {
-                System.out.print(  "1) " + "Remove item\n" +
-                                   "2) " + "Change Quantity\n" +
-                                   "3) " + "Back\n" +
-                                   "Choice : ");
+                System.out.print(  "\t\t1) " + "Remove item\n" +
+                                   "\t\t2) " + "Change Quantity\n" +
+                                   "\t\t3) " + "Back\n" +
+                                   "\t\tChoice : ");
                 int c = in.nextInt();
                 switch (c){
                     case 1:
                         removeFromCart(choice-1);
-                        System.out.println("\nRemoved!\n");
+                        System.out.println("\n\t\tRemoved!\n");
                         break;
                     case 2:
-                        System.out.print("Enter new quantity : ");
+                        System.out.print("\t\tEnter new quantity : ");
                         int q = in.nextInt();
                         ResultSet rst = statement.executeQuery("select quantity from product where product_id = "
                         + cart.get(choice-1));
                         rst.next();
                         if(rst.getInt(1) >= q){
                             quantity.set(choice-1, q);
-                            System.out.println("\nChanged!\n");
+                            System.out.println("\n\t\tChanged!\n");
                         }
                         else {
-                            System.out.println("Only " + rst.getInt(1) + " Available");
+                            System.out.println("\t\tOnly " + rst.getInt(1) + " Available");
                         }
                         break;
                     case 3:
                         break;
                     default:
-                        System.out.println("\nEnter valid choice!\n");
+                        System.out.println("\n\t\tEnter valid choice!\n");
                 }
             }
             else if(choice == cart.size()+1){
@@ -162,11 +162,11 @@ class Users {
     }
 
     void show_product_type(){
-        System.out.println("\nTypes of products available : \n");
+        System.out.println("\n\t\tTypes of products available : \n");
         try {
             ResultSet rst = statement.executeQuery("SELECT DISTINCT type_of_product FROM product ");
             while (rst.next()) {
-                System.out.println(rst.getString(1));
+                System.out.println("\t\t"+rst.getString(1));
             }
         }catch (Exception ex){
             System.out.println(ex.getMessage());
@@ -185,9 +185,14 @@ class Users {
         int item_Number = 0;
 
         do {
+            break_loop1 = 0;
+            break_loop2 = 0;
+            break_loop3 = 0;
+            break_loop4 = 0;
+            item_Number = 0;
             this.show_product_type();
-            System.out.println("\n-1) Back to Menu");
-            System.out.print("\nWhich type of product you want : ");
+            System.out.println("\n\t\t-1) Back to Menu");
+            System.out.print("\n\t\tWhich type of product you want : ");
 
             Scanner sc = new Scanner(System.in);
             String product_type = sc.nextLine();
@@ -211,8 +216,11 @@ class Users {
                     }
                     rst.beforeFirst();
                     System.out.print("Select your choice :\n\t\t1) Select item\n\t\t2) Back\n\t\tEnter your choice : ");
-                    int choice_1 = sc.nextInt();
                     do {
+
+                        int choice_1 = sc.nextInt();
+                        break_loop3 = 0;
+                        break_loop4 = 0;
                         switch(choice_1){
                             case 1:
                                 System.out.print("Select item : ");
@@ -223,7 +231,7 @@ class Users {
                                 break_loop3 = 1;
                                 break;
                             default:
-                                System.out.println("please enter valid number");
+                                System.out.print("please enter valid number :");
                         }
                     }while(break_loop3!=1 && break_loop4!=1);
 
@@ -241,13 +249,16 @@ class Users {
                     System.out.println("\t\t" + rst.getString(3) + " [" + rst.getInt(8) + "]");
                     System.out.println("\t\tSelling Price : " + rst.getInt(5));
                     System.out.println("\t\tDiscount : " + rst.getInt(6));
-                    System.out.println("\t\tAfter Discount Price : " + After_Discount_Price + "\n\n");
+                    System.out.println("\t\tAfter Discount Price : " + After_Discount_Price);
                     System.out.println("\t\tSpecification : " + rst.getString(7));
                     System.out.print("\n\t\t1) Add TO Cart\n\t\t2) back\n\n\t\tEnter Your answer : ");
 
-                    int selection = sc.nextInt();
 
+                    int selection;
                     do {
+                        selection = sc.nextInt();
+                        break_loop2 = 0;
+                        break_loop1 = 0;
                         switch (selection) {
                             case 1:
                                 do {
@@ -266,7 +277,7 @@ class Users {
                                 break_loop1 = 1;
                                 break;
                             default:
-                                System.out.println("Please Select appropriate Option");
+                                System.out.print("Please Select appropriate Option :");
                         }
                     } while (break_loop1 != 1 && break_loop2 != 1);
 
