@@ -52,7 +52,11 @@ public class Main {
                             admin.showCart();
                             break;
                         case 4:
+                            admin.manipulateData();
+                            break;
                         case 5:
+                            admin.report();
+                            break;
                         case 6:
                             System.exit(0);
                         default:
