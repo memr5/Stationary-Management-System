@@ -179,16 +179,19 @@ class Users {
         float After_Discount_Price;
         int buy_quantity;
 
-        int break_loop1 = 0;
-        int break_loop2 = 0;
-        int break_loop3 = 0;
-        int break_loop4 = 0;
-        int item_Number = 0;
+        int break_loop1;
+        int break_loop2;
+        int break_loop3;
+        int break_loop4;
+        int item_Number;
 
         do {
+
+            break_loop2 = 0;
+            item_Number = 0;
             this.show_product_type();
-            System.out.println("\n-1) Back to Menu");
-            System.out.print("\nWhich type of product you want : ");
+            System.out.println("\n\t\t-1) Back to Menu");
+            System.out.print("\n\t\tWhich type of product you want : ");
 
             Scanner sc = new Scanner(System.in);
             String product_type = sc.nextLine();
@@ -212,8 +215,11 @@ class Users {
                     }
                     rst.beforeFirst();
                     System.out.print("Select your choice :\n\t\t1) Select item\n\t\t2) Back\n\t\tEnter your choice : ");
-                    int choice_1 = sc.nextInt();
                     do {
+
+                        int choice_1 = sc.nextInt();
+                        break_loop3 = 0;
+                        break_loop4 = 0;
                         switch(choice_1){
                             case 1:
                                 System.out.print("Select item : ");
@@ -224,7 +230,7 @@ class Users {
                                 break_loop3 = 1;
                                 break;
                             default:
-                                System.out.println("please enter valid number");
+                                System.out.print("please enter valid number :");
                         }
                     }while(break_loop3!=1 && break_loop4!=1);
 
@@ -242,13 +248,16 @@ class Users {
                     System.out.println("\t\t" + rst.getString(3) + " [" + rst.getInt(8) + "]");
                     System.out.println("\t\tSelling Price : " + rst.getInt(5));
                     System.out.println("\t\tDiscount : " + rst.getInt(6));
-                    System.out.println("\t\tAfter Discount Price : " + After_Discount_Price + "\n\n");
+                    System.out.println("\t\tAfter Discount Price : " + After_Discount_Price);
                     System.out.println("\t\tSpecification : " + rst.getString(7));
                     System.out.print("\n\t\t1) Add TO Cart\n\t\t2) back\n\n\t\tEnter Your answer : ");
 
-                    int selection = sc.nextInt();
 
+                    int selection;
                     do {
+                        selection = sc.nextInt();
+                        break_loop2 = 0;
+                        break_loop1 = 0;
                         switch (selection) {
                             case 1:
                                 do {
@@ -267,7 +276,7 @@ class Users {
                                 break_loop1 = 1;
                                 break;
                             default:
-                                System.out.println("Please Select appropriate Option");
+                                System.out.print("Please Select appropriate Option :");
                         }
                     } while (break_loop1 != 1 && break_loop2 != 1);
 
