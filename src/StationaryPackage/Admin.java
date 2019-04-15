@@ -1,14 +1,10 @@
 package StationaryPackage;
 
-import Authentication.Authentication;
-
-import java.awt.*;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Scanner;
 
-public class Admin extends Users{
+class Admin extends Users{
 
     Admin() throws Exception {
         super();
@@ -138,8 +134,20 @@ public class Admin extends Users{
 
     }
 
-    void report(){
+    void report() throws Exception{
 
+        System.out.println("\nSale Report : ");
+        ResultSet resultSet = getStatement().executeQuery("select quantity,profit from history");
+
+        double totalProfit = 0;
+        int totalProducts = 0;
+
+        while (resultSet.next()){
+            totalProducts += resultSet.getInt(1);
+            totalProfit += resultSet.getDouble(2);
+        }
+
+        System.out.println("\n\t\tTotal Products sold : " + totalProducts + "\n\t\tTotal Profit : " + totalProfit);
     }
 
 }
