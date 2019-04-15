@@ -35,6 +35,7 @@ class Users {
     void orders()throws Exception{
 
         int user_id = StationaryClass.getUser_id();
+
         System.out.println("\nPurchase History : ");
         ResultSet rst = statement.executeQuery("SELECT time_stamp,product_id,quantity from history where user_id = " + user_id);
         while (rst.next()){

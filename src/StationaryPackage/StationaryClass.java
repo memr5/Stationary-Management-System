@@ -39,7 +39,7 @@ public class StationaryClass implements Pages{
 
             if(rst.next()){
                 if(rst.getString(1).equals(password)) {
-                    this.user_name = user_name;
+                    StationaryClass.user_name = user_name;
                     return 1;
                 }
                 System.out.println("WRONG PASSWORD!");
@@ -76,7 +76,7 @@ public class StationaryClass implements Pages{
     private String[] getCredentials(){
 
         Scanner in = new Scanner(System.in);
-        System.out.print("\t\tUser_name : ");
+        System.out.print("\n\t\tUser_name : ");
         String user_name = in.nextLine();
         System.out.print("\t\tPassword : ");
         String password = in.nextLine();

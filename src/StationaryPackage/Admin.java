@@ -62,7 +62,7 @@ class Admin extends Users{
 
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Which type of item you want to add : ");
+        System.out.print("\nWhich type of item you want to add : ");
         String item_type = sc.nextLine();
         item_type = item_type.toUpperCase();
 
@@ -78,6 +78,7 @@ class Admin extends Users{
         System.out.print("Discount :");
         int discount = sc.nextInt();
 
+        sc.nextLine();
         System.out.print("Specification :");
         String specification = sc.nextLine();
 
@@ -85,8 +86,8 @@ class Admin extends Users{
         int quantity = sc.nextInt();
 
         Statement statement = getStatement();
-        statement.executeUpdate("INSERT INTO product(type_of_product,produt_name,actual_price," +
-                                    "selling_price,discount,specification,quantity) values " + "(\"" + item_type + "\",\"" +
+        statement.executeUpdate("INSERT INTO product(type_of_product,product_name,actual_price," +
+                                    "selling_price,discount,specification,quantity) values" + "(\"" + item_type + "\",\"" +
                                      product_name + "\"," + actual_price + "," + selling_price + "," + discount + ",\"" +
                                      specification + "\"," + quantity +")"  );
         System.out.println("\nItem Added!\n");
