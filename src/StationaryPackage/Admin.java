@@ -10,11 +10,9 @@
 
 package StationaryPackage;
 
-import javax.swing.plaf.synth.SynthLookAndFeel;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Scanner;
-import Authentication.Authentication;
 class Admin extends Users{
 
     Admin() throws Exception {
@@ -236,7 +234,7 @@ class Admin extends Users{
 
     void report() throws Exception{
         Scanner sc = new Scanner(System.in);
-        System.out.print("\t\t1) User\n\t\t2) Date \n\t\tEnter Your Choice :");
+        System.out.print("\t\t1) User-wise\n\t\t2) Date-wise \n\t\tEnter Your Choice :");
         int choice;
         do{
             choice  = sc.nextInt();
@@ -248,23 +246,20 @@ class Admin extends Users{
                          resultSet.beforeFirst();
                          while (resultSet.next()){
                             int user_id = resultSet.getInt(1);
-                            statement = getStatement();
-                            ResultSet resultSet1 = statement.executeQuery("select user_name from user where user_id =" + user_id);
-                            resultSet1.next();
-                            System.out.print("\t\t"+resultSet1.getString(1));
-                            statement = getStatement();
-                            ResultSet rst = statement.executeQuery("SELECT date,product_id,quantity from history where user_id = " + user_id);
-                             rst.beforeFirst();
-                             while (rst.next()){
-                                 statement = getStatement();
-                                 ResultSet pname = statement.executeQuery("SELECT product_name from product where product_id = " + rst.getInt(2));
-                                 pname.next();
-                                 System.out.println("\nDate : " + rst.getDate(1) + "\tProduct Name : " + pname.getString(1) +
-                                         "\t\tQuantity : " + rst.getInt(3));
-                             }
+                            ResultSet rst = getConnection().createStatement().executeQuery("SELECT date,user_name,product_name,quantity,profit from history where user_id = " + user_id);
+                            rst.next();
+                            System.out.print("\nName : " + rst.getString(2)+"\n");
+                            rst.beforeFirst();
+                            double total_profit = 0;
+                            while (rst.next()){
+                                total_profit += rst.getDouble(5);
+                                 System.out.println("\nDate : " + rst.getDate(1) + "\nProduct Name : " + rst.getString(3) +
+                                         "\nQuantity : " + rst.getInt(4) + "\nProfit : " + rst.getDouble(5));
+                            }
+                            System.out.println("\nTotal Profit : " + total_profit);
                          }
                     }else {
-                        System.out.print("Sorry No report available");
+                        System.out.print("\nSorry no purchase-history available\n");
                     }
                     break;
                 case 2:
@@ -273,38 +268,24 @@ class Admin extends Users{
                     if(resultSet2.next()){
                         resultSet2.beforeFirst();
                         while (resultSet2.next()){
-                            System.out.println("DATE :" + resultSet2.getString(1));
-                            statement1 = getStatement();
-                            ResultSet resultSet3 = statement1.executeQuery("select product_id,user_id,quantity from history where date =" +resultSet2.getString(1) );
-                            resultSet3.next();
-                            statement1 = getStatement();
-                            ResultSet resultSet4 = statement1.executeQuery("select user_name from user WHERE user_id =" + resultSet3.getInt(2));
-                            statement1 = getStatement();
-                            ResultSet resultSet5 = statement1.executeQuery("select product_name from product where product_id = "+resultSet3.getInt(1));
-                            resultSet4.next();
-                            resultSet5.next();
-                            System.out.println("\t\t\t\t"+resultSet4.getString(1)+" "+resultSet5.getString(1)+"  ["+resultSet3.getInt(3)+"]");
+                            System.out.println("\nDATE : " + resultSet2.getString(1));
+                            ResultSet resultSet3 = getConnection().createStatement().executeQuery("select user_name,product_name,quantity,profit from history where date = \"" + resultSet2.getString(1) + "\"");
+                            double total_profit = 0;
+                            while (resultSet3.next()) {
+                                total_profit += resultSet3.getDouble(4);
+                                System.out.println("\nName : " + resultSet3.getString(1) + "\nProduct Name : " + resultSet3.getString(2) + "\nQuantity : " + resultSet3.getInt(3) + "\n" +
+                                        "Profit : " + resultSet3.getDouble(4));
+                            }
+                            System.out.println("\nTotal Profit : " + total_profit);
                         }
                     }else {
-                        System.out.print("Sorry No data available ");
+                        System.out.print("\nSorry purchase-history available\n");
                     }
                     break;
                 default:
-                    System.out.print("Enter valid Argument :");
+                    System.out.print("\nEnter valid Argument :");
             }
         }while (choice > 2);
-//        System.out.println("\nSale Report : ");
-//        ResultSet resultSet = getStatement().executeQuery("select quantity,profit from history");
-//
-//        double totalProfit = 0;
-//        int totalProducts = 0;
-//
-//        while (resultSet.next()){
-//            totalProducts += resultSet.getInt(1);
-//            totalProfit += resultSet.getDouble(2);
-//        }
-//
-//        System.out.println("\n\t\tTotal Products sold : " + totalProducts + "\n\t\tTotal Profit : " + totalProfit);
     }
 
 }

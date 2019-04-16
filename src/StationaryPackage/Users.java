@@ -49,16 +49,13 @@ class Users {
         int user_id = StationaryClass.getUser_id();
 
         System.out.println("\nPurchase History : ");
-        ResultSet rst = statement.executeQuery("SELECT date,product_id,quantity from history where user_id = " + user_id);
+        ResultSet rst = statement.executeQuery("SELECT date,product_name,quantity from history where user_id = " + user_id);
         if(!rst.next()){
             System.out.println("\nNo history found!\n");
         }
         rst.beforeFirst();
         while (rst.next()){
-            Statement s = connection.createStatement();
-            ResultSet pname = s.executeQuery("SELECT product_name from product where product_id = " + rst.getInt(2));
-            pname.next();
-            System.out.println("\nDate : " + rst.getDate(1) + "\nProduct Name : " + pname.getString(1) +
+            System.out.println("\nDate : " + rst.getDate(1) + "\nProduct Name : " + rst.getString(2) +
                     "\nQuantity : " + rst.getInt(3));
         }
 
@@ -111,13 +108,13 @@ class Users {
         int user_id = StationaryClass.getUser_id();
 
         for(int i=0;i<cart.size();i++){
-            ResultSet rst = statement.executeQuery("select actual_price,selling_price,discount from product where product_id = " + cart.get(i));
+            ResultSet rst = statement.executeQuery("select product_name,actual_price,selling_price,discount from product where product_id = " + cart.get(i));
             rst.next();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             String date = formatter.format(new Date());
-            double profit = (rst.getDouble(2) - (rst.getDouble(2)*rst.getDouble(3)/100) - rst.getDouble(1))*(double)quantity.get(i);
-            statement.executeUpdate("insert into history(date,user_id,product_id,quantity,profit) values" + "(\""
-            + date + "\"," + user_id + "," + cart.get(i) + "," + quantity.get(i) + "," + profit + ")");
+            double profit = (rst.getDouble(3) - (rst.getDouble(3)*rst.getDouble(4)/100) - rst.getDouble(2))*(double)quantity.get(i);
+            statement.executeUpdate("insert into history(date,user_id,user_name,product_id,product_name,quantity,profit) values" + "(\""
+            + date + "\"," + user_id + ",\"" + StationaryClass.getUser_name() + "\"," + cart.get(i) + ",\"" + rst.getString(1) + "\"," + quantity.get(i) + "," + profit + ")");
         }
     }
 
