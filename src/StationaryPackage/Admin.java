@@ -80,13 +80,13 @@ class Admin extends Users{
         String product_name = sc.nextLine();
 
         System.out.print("Actual Price :");
-        int actual_price = sc.nextInt();
+        double actual_price = sc.nextDouble();
 
         System.out.print("Selling price :");
-        int selling_price = sc.nextInt();
+        double selling_price = sc.nextDouble();
 
         System.out.print("Discount :");
-        int discount = sc.nextInt();
+        double discount = sc.nextDouble();
 
         sc.nextLine();
         System.out.print("Specification :");
