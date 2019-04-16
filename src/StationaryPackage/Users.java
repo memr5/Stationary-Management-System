@@ -229,7 +229,7 @@ class Users {
                     System.out.println("\nProduct Names and [ Quantity ] : \n");
                     ResultSet rst = statement.executeQuery("SELECT * FROM product WHERE type_of_product = '" + upper_product_type + "'");
                     while (rst.next()) {
-                        System.out.println("\n" + index++ + ")    " + rst.getString(3) + "[" + rst.getInt(8) + "]");
+                        System.out.println("\n" + index++ + ")    " + rst.getString(3) + " [" + rst.getInt(8) + "]");
                         System.out.println("\t\tSelling Price : " + rst.getDouble(5));
                         System.out.println("\t\tDiscount : " + rst.getDouble(6));
                         After_Discount_Price = rst.getDouble(5) -  (rst.getDouble(5) * rst.getDouble(6)) / 100;

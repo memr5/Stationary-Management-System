@@ -127,6 +127,12 @@ class Admin extends Users{
             System.out.print("\nWhich product you want to remove?\nEnter product number : ");
             int remove_product_number = sc.nextInt();
 
+            if(remove_product_number<=0 || remove_product_number >= index){
+                System.out.println("\nEnter Valid product name\n");
+                removeItem();
+                return;
+            }
+
             resultSet.beforeFirst();
             for (int i=0;i<remove_product_number;i++){
                 resultSet.next();
