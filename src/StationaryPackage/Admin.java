@@ -13,7 +13,6 @@ package StationaryPackage;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Scanner;
-
 class Admin extends Users{
 
     Admin() throws Exception {
@@ -80,13 +79,13 @@ class Admin extends Users{
         String product_name = sc.nextLine();
 
         System.out.print("Actual Price :");
-        int actual_price = sc.nextInt();
+        double actual_price = sc.nextDouble();
 
         System.out.print("Selling price :");
-        int selling_price = sc.nextInt();
+        double selling_price = sc.nextDouble();
 
         System.out.print("Discount :");
-        int discount = sc.nextInt();
+        double discount = sc.nextDouble();
 
         sc.nextLine();
         System.out.print("Specification :");
@@ -127,6 +126,12 @@ class Admin extends Users{
             System.out.print("\nWhich product you want to remove?\nEnter product number : ");
             int remove_product_number = sc.nextInt();
 
+            if(remove_product_number<=0 || remove_product_number >= index){
+                System.out.println("\nEnter Valid product number\n");
+                removeItem();
+                return;
+            }
+
             resultSet.beforeFirst();
             for (int i=0;i<remove_product_number;i++){
                 resultSet.next();
@@ -138,6 +143,7 @@ class Admin extends Users{
 
         }else{
             System.out.print("That product is not available ");
+            removeItem();
         }
     }
 
@@ -164,6 +170,12 @@ class Admin extends Users{
             System.out.print("\nitem Number :");
             int item_number = sc.nextInt();
 
+            if(item_number<=0 || item_number >= index){
+                System.out.println("\nEnter Valid item number\n");
+                changeQuantity();
+                return;
+            }
+
             resultSet.beforeFirst();
             for (int i=0;i<item_number;i++){
                 resultSet.next();
@@ -182,14 +194,27 @@ class Admin extends Users{
                     case 1:
                         System.out.print("How many items you want ot add :");
                         quantity = sc.nextInt();
+
+                        if(quantity <= 0){
+                            System.out.println("\nEnter Valid quantity\n");
+                            selection = 0;
+                        }
+
                         quantity = quantity + resultSet.getInt(8);
                         break;
                     case 2:
                         System.out.print("How many items you want to remove :");
                         quantity = sc.nextInt();
+
                         if(quantity > resultSet.getInt(8)){
                             System.out.print("\nSorry that many items not available : ");
-                        }else {
+                            selection = 0;
+                        }
+                        else if(quantity <= 0){
+                            System.out.println("\nEnter Valid quantity\n");
+                            selection = 0;
+                        }
+                        else {
                             quantity = resultSet.getInt(8) - quantity;
                         }
                         break;
@@ -202,24 +227,65 @@ class Admin extends Users{
             System.out.println("\nQuantity Updated!\n");
         }else{
             System.out.print("\nThat type of item is not available\n");
+            changeQuantity();
         }
 
     }
 
     void report() throws Exception{
-
-        System.out.println("\nSale Report : ");
-        ResultSet resultSet = getStatement().executeQuery("select quantity,profit from history");
-
-        double totalProfit = 0;
-        int totalProducts = 0;
-
-        while (resultSet.next()){
-            totalProducts += resultSet.getInt(1);
-            totalProfit += resultSet.getDouble(2);
-        }
-
-        System.out.println("\n\t\tTotal Products sold : " + totalProducts + "\n\t\tTotal Profit : " + totalProfit);
+        Scanner sc = new Scanner(System.in);
+        System.out.print("\t\t1) User-wise\n\t\t2) Date-wise \n\t\tEnter Your Choice :");
+        int choice;
+        do{
+            choice  = sc.nextInt();
+            switch (choice){
+                case 1:
+                    Statement statement = getStatement();
+                    ResultSet resultSet = statement.executeQuery("select DISTINCT user_id from history");
+                    if(resultSet.next()){
+                         resultSet.beforeFirst();
+                         while (resultSet.next()){
+                            int user_id = resultSet.getInt(1);
+                            ResultSet rst = getConnection().createStatement().executeQuery("SELECT date,user_name,product_name,quantity,profit from history where user_id = " + user_id);
+                            rst.next();
+                            System.out.print("\nName : " + rst.getString(2)+"\n");
+                            rst.beforeFirst();
+                            double total_profit = 0;
+                            while (rst.next()){
+                                total_profit += rst.getDouble(5);
+                                 System.out.println("\nDate : " + rst.getDate(1) + "\nProduct Name : " + rst.getString(3) +
+                                         "\nQuantity : " + rst.getInt(4) + "\nProfit : " + rst.getDouble(5));
+                            }
+                            System.out.println("\nTotal Profit : " + total_profit);
+                         }
+                    }else {
+                        System.out.print("\nSorry no purchase-history available\n");
+                    }
+                    break;
+                case 2:
+                    Statement statement1 = getStatement();
+                    ResultSet resultSet2 = statement1.executeQuery("select DISTINCT date from history");
+                    if(resultSet2.next()){
+                        resultSet2.beforeFirst();
+                        while (resultSet2.next()){
+                            System.out.println("\nDATE : " + resultSet2.getString(1));
+                            ResultSet resultSet3 = getConnection().createStatement().executeQuery("select user_name,product_name,quantity,profit from history where date = \"" + resultSet2.getString(1) + "\"");
+                            double total_profit = 0;
+                            while (resultSet3.next()) {
+                                total_profit += resultSet3.getDouble(4);
+                                System.out.println("\nName : " + resultSet3.getString(1) + "\nProduct Name : " + resultSet3.getString(2) + "\nQuantity : " + resultSet3.getInt(3) + "\n" +
+                                        "Profit : " + resultSet3.getDouble(4));
+                            }
+                            System.out.println("\nTotal Profit : " + total_profit);
+                        }
+                    }else {
+                        System.out.print("\nSorry purchase-history available\n");
+                    }
+                    break;
+                default:
+                    System.out.print("\nEnter valid Argument :");
+            }
+        }while (choice > 2);
     }
 
 }
