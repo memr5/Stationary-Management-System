@@ -13,7 +13,9 @@ package StationaryPackage;
 import Authentication.Authentication;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 class Users {
@@ -47,12 +49,16 @@ class Users {
         int user_id = StationaryClass.getUser_id();
 
         System.out.println("\nPurchase History : ");
-        ResultSet rst = statement.executeQuery("SELECT time_stamp,product_id,quantity from history where user_id = " + user_id);
+        ResultSet rst = statement.executeQuery("SELECT date,product_id,quantity from history where user_id = " + user_id);
+        if(!rst.next()){
+            System.out.println("\nNo history found!\n");
+        }
+        rst.beforeFirst();
         while (rst.next()){
             Statement s = connection.createStatement();
             ResultSet pname = s.executeQuery("SELECT product_name from product where product_id = " + rst.getInt(2));
             pname.next();
-            System.out.println("\nTime : " + rst.getTimestamp(1) + "\nProduct Name : " + pname.getString(1) +
+            System.out.println("\nDate : " + rst.getDate(1) + "\nProduct Name : " + pname.getString(1) +
                     "\nQuantity : " + rst.getInt(3));
         }
 
@@ -63,7 +69,7 @@ class Users {
         ResultSet rst = statement.executeQuery("SELECT selling_price,discount from product where product_id = " +
                 product_id );
         rst.next();
-        cartValue +=(rst.getInt(1)-(rst.getInt(1)*rst.getInt(2)/100))*quantity;
+        cartValue += (rst.getDouble(1)-(rst.getDouble(1)*rst.getDouble(2)/100))*(double)quantity;
         cart.add(product_id);
         this.quantity.add(quantity);
     }
@@ -73,7 +79,7 @@ class Users {
         ResultSet rst = statement.executeQuery("SELECT selling_price,discount from product where product_id = " +
                 cart.get(product_index));
         rst.next();
-        cartValue -= (rst.getInt(1)-(rst.getInt(1)*rst.getInt(2)/100))*quantity.get(product_index);
+        cartValue -= (rst.getDouble(1)-(rst.getDouble(1)*rst.getDouble(2)/100))*(double)quantity.get(product_index);
         cart.remove(product_index);
         quantity.remove(product_index);
     }
@@ -84,6 +90,7 @@ class Users {
             System.out.println("\nEmpty Cart!\n");
             return;
         }
+
         for (int i=0;i<cart.size();i++){
             ResultSet rst = statement.executeQuery("SELECT quantity from product where product_id = " +
                     cart.get(i) );
@@ -106,10 +113,11 @@ class Users {
         for(int i=0;i<cart.size();i++){
             ResultSet rst = statement.executeQuery("select actual_price,selling_price,discount from product where product_id = " + cart.get(i));
             rst.next();
-            Timestamp tmp = new Timestamp(System.currentTimeMillis());
-            int profit = (rst.getInt(2) - (rst.getInt(2)*rst.getInt(3)/100) - rst.getInt(1))*quantity.get(i);
-            statement.executeUpdate("insert into history(time_stamp,user_id,product_id,quantity,profit) values" + "(\""
-            + tmp + "\"," + user_id + "," + cart.get(i) + "," + quantity.get(i) + "," + profit + ")");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String date = formatter.format(new Date());
+            double profit = (rst.getDouble(2) - (rst.getDouble(2)*rst.getDouble(3)/100) - rst.getDouble(1))*(double)quantity.get(i);
+            statement.executeUpdate("insert into history(date,user_id,product_id,quantity,profit) values" + "(\""
+            + date + "\"," + user_id + "," + cart.get(i) + "," + quantity.get(i) + "," + profit + ")");
         }
     }
 
@@ -148,12 +156,15 @@ class Users {
                         ResultSet rst = statement.executeQuery("select quantity from product where product_id = "
                         + cart.get(choice-1));
                         rst.next();
-                        if(rst.getInt(1) >= q){
+                        if(q <= 0){
+                            System.out.println("\nEnter valid quantity!\n");
+                        }
+                        else if(rst.getInt(1) >= q){
                             quantity.set(choice-1, q);
                             System.out.println("\nChanged!\n");
                         }
                         else {
-                            System.out.println("Only " + rst.getInt(1) + " Available");
+                            System.out.println("\nOnly " + rst.getInt(1) + " Available\n");
                         }
                         break;
                     case 3:
@@ -186,7 +197,7 @@ class Users {
 
     void  purchase_item(){
 
-        float After_Discount_Price;
+        double After_Discount_Price;
         int buy_quantity;
 
         int break_loop1;
@@ -215,12 +226,13 @@ class Users {
             try {
                 do {
                     int index = 1;
+                    System.out.println("\nProduct Names and [ Quantity ] : \n");
                     ResultSet rst = statement.executeQuery("SELECT * FROM product WHERE type_of_product = '" + upper_product_type + "'");
                     while (rst.next()) {
-                        System.out.println("\n" + index++ + ")    " + rst.getString(3) + "[" + rst.getInt(8) + "]");
-                        System.out.println("\t\tSelling Price : " + rst.getInt(5));
-                        System.out.println("\t\tDiscount : " + rst.getInt(6));
-                        After_Discount_Price = (float) rst.getInt(5) - (float) (rst.getInt(5) * rst.getInt(6)) / 100;
+                        System.out.println("\n" + index++ + ")    " + rst.getString(3) + " [" + rst.getInt(8) + "]");
+                        System.out.println("\t\tSelling Price : " + rst.getDouble(5));
+                        System.out.println("\t\tDiscount : " + rst.getDouble(6));
+                        After_Discount_Price = rst.getDouble(5) -  (rst.getDouble(5) * rst.getDouble(6)) / 100;
                         System.out.println("\t\tAfter Discount Price : " + After_Discount_Price + "\n\n");
                     }
                     rst.beforeFirst();
@@ -240,7 +252,7 @@ class Users {
                                 break_loop3 = 1;
                                 break;
                             default:
-                                System.out.print("please enter valid number :");
+                                System.out.print("Please enter valid number :");
                         }
                     }while(break_loop3!=1 && break_loop4!=1);
 
@@ -253,11 +265,11 @@ class Users {
                         rst.next();
                     }
 
-                    After_Discount_Price = (float) rst.getInt(5) - (float) (rst.getInt(5) * rst.getInt(6)) / 100;
+                    After_Discount_Price =  rst.getDouble(5) - (rst.getDouble(5) * rst.getDouble(6)) / 100;
                     System.out.println("\n\nYou Selected : \n");
                     System.out.println("\t\t" + rst.getString(3) + " [" + rst.getInt(8) + "]");
-                    System.out.println("\t\tSelling Price : " + rst.getInt(5));
-                    System.out.println("\t\tDiscount : " + rst.getInt(6));
+                    System.out.println("\t\tSelling Price : " + rst.getDouble(5));
+                    System.out.println("\t\tDiscount : " + rst.getDouble(6));
                     System.out.println("\t\tAfter Discount Price : " + After_Discount_Price);
                     System.out.println("\t\tSpecification : " + rst.getString(7));
                     System.out.print("\n\t\t1) Add TO Cart\n\t\t2) back\n\n\t\tEnter Your answer : ");
@@ -274,12 +286,18 @@ class Users {
                                     System.out.print("Add Quantity : ");
                                     buy_quantity = sc.nextInt();
                                     if (buy_quantity > rst.getInt(8)) {
-                                        System.out.println("Sorry We have only " + rst.getInt(8) + " Quantity");
+                                        System.out.println("\nSorry We have only " + rst.getInt(8) + " items in quantity\n");
+                                        continue;
                                     }
-                                } while (buy_quantity > rst.getInt(8));
+                                    if(buy_quantity <= 0){
+                                        System.out.println("\nEnter Valid Quantity!\n");
+                                        continue;
+                                    }
+                                    break;
+                                } while (true);
 
                                 addToCart(rst.getInt(1), buy_quantity);
-                                System.out.println("Added To Cart SuccessFully......\n");
+                                System.out.println("Added To Cart Successfully......\n");
                                 break_loop2 = 1;
                                 break;
                             case 2:

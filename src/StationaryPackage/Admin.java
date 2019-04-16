@@ -80,13 +80,13 @@ class Admin extends Users{
         String product_name = sc.nextLine();
 
         System.out.print("Actual Price :");
-        int actual_price = sc.nextInt();
+        double actual_price = sc.nextDouble();
 
         System.out.print("Selling price :");
-        int selling_price = sc.nextInt();
+        double selling_price = sc.nextDouble();
 
         System.out.print("Discount :");
-        int discount = sc.nextInt();
+        double discount = sc.nextDouble();
 
         sc.nextLine();
         System.out.print("Specification :");
@@ -127,6 +127,12 @@ class Admin extends Users{
             System.out.print("\nWhich product you want to remove?\nEnter product number : ");
             int remove_product_number = sc.nextInt();
 
+            if(remove_product_number<=0 || remove_product_number >= index){
+                System.out.println("\nEnter Valid product number\n");
+                removeItem();
+                return;
+            }
+
             resultSet.beforeFirst();
             for (int i=0;i<remove_product_number;i++){
                 resultSet.next();
@@ -138,6 +144,7 @@ class Admin extends Users{
 
         }else{
             System.out.print("That product is not available ");
+            removeItem();
         }
     }
 
@@ -164,6 +171,12 @@ class Admin extends Users{
             System.out.print("\nitem Number :");
             int item_number = sc.nextInt();
 
+            if(item_number<=0 || item_number >= index){
+                System.out.println("\nEnter Valid item number\n");
+                changeQuantity();
+                return;
+            }
+
             resultSet.beforeFirst();
             for (int i=0;i<item_number;i++){
                 resultSet.next();
@@ -182,14 +195,27 @@ class Admin extends Users{
                     case 1:
                         System.out.print("How many items you want ot add :");
                         quantity = sc.nextInt();
+
+                        if(quantity <= 0){
+                            System.out.println("\nEnter Valid quantity\n");
+                            selection = 0;
+                        }
+
                         quantity = quantity + resultSet.getInt(8);
                         break;
                     case 2:
                         System.out.print("How many items you want to remove :");
                         quantity = sc.nextInt();
+
                         if(quantity > resultSet.getInt(8)){
                             System.out.print("\nSorry that many items not available : ");
-                        }else {
+                            selection = 0;
+                        }
+                        else if(quantity <= 0){
+                            System.out.println("\nEnter Valid quantity\n");
+                            selection = 0;
+                        }
+                        else {
                             quantity = resultSet.getInt(8) - quantity;
                         }
                         break;
@@ -202,6 +228,7 @@ class Admin extends Users{
             System.out.println("\nQuantity Updated!\n");
         }else{
             System.out.print("\nThat type of item is not available\n");
+            changeQuantity();
         }
 
     }
