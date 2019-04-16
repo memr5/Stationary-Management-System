@@ -13,7 +13,9 @@ package StationaryPackage;
 import Authentication.Authentication;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 class Users {
@@ -106,10 +108,11 @@ class Users {
         for(int i=0;i<cart.size();i++){
             ResultSet rst = statement.executeQuery("select actual_price,selling_price,discount from product where product_id = " + cart.get(i));
             rst.next();
-            Timestamp tmp = new Timestamp(System.currentTimeMillis());
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
+            String date = formatter.format(new Date());
             int profit = (rst.getInt(2) - (rst.getInt(2)*rst.getInt(3)/100) - rst.getInt(1))*quantity.get(i);
-            statement.executeUpdate("insert into history(time_stamp,user_id,product_id,quantity,profit) values" + "(\""
-            + tmp + "\"," + user_id + "," + cart.get(i) + "," + quantity.get(i) + "," + profit + ")");
+            statement.executeUpdate("insert into history(date,user_id,product_id,quantity,profit) values" + "(\""
+            + date + "\"," + user_id + "," + cart.get(i) + "," + quantity.get(i) + "," + profit + ")");
         }
     }
 
