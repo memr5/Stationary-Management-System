@@ -54,9 +54,13 @@ class Users {
             System.out.println("\nNo history found!\n");
         }
         rst.beforeFirst();
+        System.out.println("------------------------------------------------------");
+        System.out.printf("%10s %30s %10s", "DATE", "PRODUCT NAME", "QUANTITY");
+        System.out.println();
+        System.out.println("------------------------------------------------------");
         while (rst.next()){
-            System.out.println("\nDate : " + rst.getDate(1) + "\nProduct Name : " + rst.getString(2) +
-                    "\nQuantity : " + rst.getInt(3));
+            System.out.format("%10s %30s %10s", rst.getDate(1) , rst.getString(2) , rst.getInt(3));
+            System.out.print("\n");
         }
 
     }
@@ -223,14 +227,20 @@ class Users {
             try {
                 do {
                     int index = 1;
-                    System.out.println("\nProduct Names and [ Quantity ] : \n");
+                    System.out.println("------------------------------------------------------------------------------------------------------------");
+                    System.out.printf("%5s %35s %10s %15s %15s %15s", "INDEX", "PRODUCT NAME","QUANTITY","SELLING PRICE","DISCOUNT","AFTER DISCOUNT" );
+                    System.out.println();
+                    System.out.println("------------------------------------------------------------------------------------------------------------");
                     ResultSet rst = statement.executeQuery("SELECT * FROM product WHERE type_of_product = '" + upper_product_type + "'");
                     while (rst.next()) {
-                        System.out.println("\n" + index++ + ")    " + rst.getString(3) + " [" + rst.getInt(8) + "]");
-                        System.out.println("\t\tSelling Price : " + rst.getDouble(5));
-                        System.out.println("\t\tDiscount : " + rst.getDouble(6));
+
+//                        System.out.print("\n" + index++ +  + rst.getString(3) + " [" + rst.getInt(8) + "]");
+//                        System.out.println("\t\tSelling Price : " + rst.getDouble(5));
+//                        System.out.println("\t\tDiscount : " + rst.getDouble(6));
                         After_Discount_Price = rst.getDouble(5) -  (rst.getDouble(5) * rst.getDouble(6)) / 100;
-                        System.out.println("\t\tAfter Discount Price : " + After_Discount_Price + "\n\n");
+//                        System.out.println("\t\tAfter Discount Price : " + After_Discount_Price + "\n\n");
+                        System.out.format("%5s %35s %10s %15s %15s %15s",index++, rst.getString(3),rst.getInt(8),rst.getDouble(5),rst.getDouble(6),After_Discount_Price);
+                        System.out.print("\n");
                     }
                     rst.beforeFirst();
                     System.out.print("Select your choice :\n\t\t1) Select item\n\t\t2) Back\n\t\tEnter your choice : ");

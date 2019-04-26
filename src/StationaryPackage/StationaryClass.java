@@ -11,7 +11,6 @@
 package StationaryPackage;
 
 import Authentication.Authentication;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -23,6 +22,7 @@ public class StationaryClass implements Pages{
     private static int user_id;
 
     public void Banner(){
+
         System.out.print  ("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n" +
                            "---------------------STATIONARY-MANAGEMENT-SYSTEM--------------------\n\n" +
                            "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n");
