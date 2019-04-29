@@ -119,8 +119,14 @@ class Admin extends Users{
             resultSet.beforeFirst();
             int index = 1;
             System.out.println("\nAvailable products of type : " + item_type);
+
+            System.out.println("---------------------------------------------------");
+            System.out.printf("%5s %35s %10s", "INDEX", "PRODUCT NAME","QUANTITY\n");
+            System.out.println("---------------------------------------------------");
+
             while (resultSet.next()){
-                System.out.println("\n" + index++ + ")    " + resultSet.getString(3) + " [" + resultSet.getInt(8) + "]");
+                System.out.format("%5s %35s %10s",index++, resultSet.getString(3),resultSet.getInt(8));
+                System.out.print("\n");
             }
 
             System.out.print("\nWhich product you want to remove?\nEnter product number : ");
@@ -162,9 +168,13 @@ class Admin extends Users{
 
             int index = 1;
             System.out.println("\nAvailable products of type : " + type_Of_item);
+            System.out.println("---------------------------------------------------");
+            System.out.printf("%5s %35s %10s", "INDEX", "PRODUCT NAME","QUANTITY");
+            System.out.println("\n---------------------------------------------------");
 
             while (resultSet.next()){
-                System.out.println("\n" + index++ + ")    " + resultSet.getString(3) + " [" + resultSet.getInt(8) + "]");
+                System.out.format("%5s %35s %10s",index++, resultSet.getString(3),resultSet.getInt(8));
+                System.out.print("\n");
             }
 
             System.out.print("\nitem Number :");
@@ -183,7 +193,7 @@ class Admin extends Users{
 
             int product_id = resultSet.getInt(1);
             int selection;
-            int quantity = 0;
+            int quantity;
 
             do {
                 System.out.print("\n\t\t1. Add\n\t\t2. Remove");
@@ -192,15 +202,19 @@ class Admin extends Users{
 
                 switch (selection){
                     case 1:
-                        System.out.print("How many items you want ot add :");
+                        System.out.print("\nHow many items you want to" +
+                                " add : ");
                         quantity = sc.nextInt();
 
                         if(quantity <= 0){
                             System.out.println("\nEnter Valid quantity\n");
                             selection = 0;
                         }
-
-                        quantity = quantity + resultSet.getInt(8);
+                        else {
+                            quantity = quantity + resultSet.getInt(8);
+                            getConnection().createStatement().executeUpdate("update product set quantity = " + quantity + " where product_id = " + product_id);
+                            System.out.println("\nQuantity Updated!\n");
+                        }
                         break;
                     case 2:
                         System.out.print("How many items you want to remove :");
@@ -216,6 +230,8 @@ class Admin extends Users{
                         }
                         else {
                             quantity = resultSet.getInt(8) - quantity;
+                            getConnection().createStatement().executeUpdate("update product set quantity = " + quantity + " where product_id = " + product_id);
+                            System.out.println("\nQuantity Updated!\n");
                         }
                         break;
                     default:
@@ -223,8 +239,6 @@ class Admin extends Users{
                 }
             }while (selection!= 1 && selection != 2);
 
-            getConnection().createStatement().executeUpdate("update product set quantity = " + quantity + " where product_id = " + product_id);
-            System.out.println("\nQuantity Updated!\n");
         }else{
             System.out.print("\nThat type of item is not available\n");
             changeQuantity();
