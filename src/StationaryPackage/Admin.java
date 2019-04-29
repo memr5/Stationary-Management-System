@@ -119,8 +119,14 @@ class Admin extends Users{
             resultSet.beforeFirst();
             int index = 1;
             System.out.println("\nAvailable products of type : " + item_type);
+
+            System.out.println("---------------------------------------------------");
+            System.out.printf("%5s %35s %10s", "INDEX", "PRODUCT NAME","QUANTITY\n");
+            System.out.println("---------------------------------------------------");
+
             while (resultSet.next()){
-                System.out.println("\n" + index++ + ")    " + resultSet.getString(3) + " [" + resultSet.getInt(8) + "]");
+                System.out.format("%5s %35s %10s",index++, resultSet.getString(3),resultSet.getInt(8));
+                System.out.print("\n");
             }
 
             System.out.print("\nWhich product you want to remove?\nEnter product number : ");
@@ -162,9 +168,13 @@ class Admin extends Users{
 
             int index = 1;
             System.out.println("\nAvailable products of type : " + type_Of_item);
+            System.out.println("---------------------------------------------------");
+            System.out.printf("%5s %35s %10s", "INDEX", "PRODUCT NAME","QUANTITY");
+            System.out.println("\n---------------------------------------------------");
 
             while (resultSet.next()){
-                System.out.println("\n" + index++ + ")    " + resultSet.getString(3) + " [" + resultSet.getInt(8) + "]");
+                System.out.format("%5s %35s %10s",index++, resultSet.getString(3),resultSet.getInt(8));
+                System.out.print("\n");
             }
 
             System.out.print("\nitem Number :");
@@ -183,7 +193,7 @@ class Admin extends Users{
 
             int product_id = resultSet.getInt(1);
             int selection;
-            int quantity = 0;
+            int quantity;
 
             do {
                 System.out.print("\n\t\t1. Add\n\t\t2. Remove");
@@ -192,15 +202,19 @@ class Admin extends Users{
 
                 switch (selection){
                     case 1:
-                        System.out.print("How many items you want ot add :");
+                        System.out.print("\nHow many items you want to" +
+                                " add : ");
                         quantity = sc.nextInt();
 
                         if(quantity <= 0){
                             System.out.println("\nEnter Valid quantity\n");
                             selection = 0;
                         }
-
-                        quantity = quantity + resultSet.getInt(8);
+                        else {
+                            quantity = quantity + resultSet.getInt(8);
+                            getConnection().createStatement().executeUpdate("update product set quantity = " + quantity + " where product_id = " + product_id);
+                            System.out.println("\nQuantity Updated!\n");
+                        }
                         break;
                     case 2:
                         System.out.print("How many items you want to remove :");
@@ -216,6 +230,8 @@ class Admin extends Users{
                         }
                         else {
                             quantity = resultSet.getInt(8) - quantity;
+                            getConnection().createStatement().executeUpdate("update product set quantity = " + quantity + " where product_id = " + product_id);
+                            System.out.println("\nQuantity Updated!\n");
                         }
                         break;
                     default:
@@ -223,8 +239,6 @@ class Admin extends Users{
                 }
             }while (selection!= 1 && selection != 2);
 
-            getConnection().createStatement().executeUpdate("update product set quantity = " + quantity + " where product_id = " + product_id);
-            System.out.println("\nQuantity Updated!\n");
         }else{
             System.out.print("\nThat type of item is not available\n");
             changeQuantity();
@@ -240,7 +254,7 @@ class Admin extends Users{
             choice  = sc.nextInt();
             switch (choice){
                 case 1:
-                    Statement statement = getStatement();
+                    Statement statement = getConnection().createStatement();
                     ResultSet resultSet = statement.executeQuery("select DISTINCT user_id from history");
                     if(resultSet.next()){
                          resultSet.beforeFirst();
@@ -251,10 +265,16 @@ class Admin extends Users{
                             System.out.print("\nName : " + rst.getString(2)+"\n");
                             rst.beforeFirst();
                             double total_profit = 0;
+                             System.out.println("-----------------------------------------------------------------------------");
+                             System.out.printf("%10s %30s %10s %20s", "DATE", "PRODUCT NAME", "QUANTITY", "PROFIT");
+                             System.out.println();
+                             System.out.println("-----------------------------------------------------------------------------");
                             while (rst.next()){
                                 total_profit += rst.getDouble(5);
-                                 System.out.println("\nDate : " + rst.getDate(1) + "\nProduct Name : " + rst.getString(3) +
-                                         "\nQuantity : " + rst.getInt(4) + "\nProfit : " + rst.getDouble(5));
+                                System.out.format("%10s %30s %10s %20s",rst.getDate(1),rst.getString(3),rst.getInt(4),rst.getDouble(5));
+                                System.out.print("\n");
+//                                 System.out.println("\nDate : " + rst.getDate(1) + "\nProduct Name : " + rst.getString(3) +
+//                                         "\nQuantity : " + rst.getInt(4) + "\nProfit : " + rst.getDouble(5));
                             }
                             System.out.println("\nTotal Profit : " + total_profit);
                          }
@@ -263,7 +283,7 @@ class Admin extends Users{
                     }
                     break;
                 case 2:
-                    Statement statement1 = getStatement();
+                    Statement statement1 = getConnection().createStatement();
                     ResultSet resultSet2 = statement1.executeQuery("select DISTINCT date from history");
                     if(resultSet2.next()){
                         resultSet2.beforeFirst();
@@ -271,10 +291,16 @@ class Admin extends Users{
                             System.out.println("\nDATE : " + resultSet2.getString(1));
                             ResultSet resultSet3 = getConnection().createStatement().executeQuery("select user_name,product_name,quantity,profit from history where date = \"" + resultSet2.getString(1) + "\"");
                             double total_profit = 0;
+                            System.out.println("-----------------------------------------------------------------------------");
+                            System.out.printf("%15s %30s %10s %20s", "NAME", "PRODUCT NAME","QUANTITY","PROFIT");
+                            System.out.println();
+                            System.out.println("-----------------------------------------------------------------------------");
                             while (resultSet3.next()) {
                                 total_profit += resultSet3.getDouble(4);
-                                System.out.println("\nName : " + resultSet3.getString(1) + "\nProduct Name : " + resultSet3.getString(2) + "\nQuantity : " + resultSet3.getInt(3) + "\n" +
-                                        "Profit : " + resultSet3.getDouble(4));
+                                System.out.format("%15s %30s %10s %20s",resultSet3.getString(1),resultSet3.getString(2),resultSet3.getInt(3),resultSet3.getDouble(4));
+//                                System.out.println("\nName : " + resultSet3.getString(1) + "\nProduct Name : " + resultSet3.getString(2) + "\nQuantity : " + resultSet3.getInt(3) + "\n" +
+//                                        "Profit : " + resultSet3.getDouble(4));
+                                System.out.print("\n");
                             }
                             System.out.println("\nTotal Profit : " + total_profit);
                         }
