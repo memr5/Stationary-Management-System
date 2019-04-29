@@ -229,7 +229,6 @@ class Users {
                     int index = 1;
                     System.out.println("------------------------------------------------------------------------------------------------------------");
                     System.out.printf("%5s %35s %10s %15s %15s %15s", "INDEX", "PRODUCT NAME","QUANTITY","SELLING PRICE","DISCOUNT","AFTER DISCOUNT" );
-                    System.out.println();
                     System.out.println("------------------------------------------------------------------------------------------------------------");
                     ResultSet rst = statement.executeQuery("SELECT * FROM product WHERE type_of_product = '" + upper_product_type + "'");
                     while (rst.next()) {

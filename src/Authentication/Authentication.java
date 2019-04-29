@@ -18,7 +18,7 @@ public class Authentication {
     public Connection connect() throws Exception{
 
         return DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/stationary-db","root","Vatsal@1999");
+                "jdbc:mysql://localhost:3306/stationary-db","root","memr5");
     }
 
     public static boolean isAdmin(String user_name) throws Exception{
